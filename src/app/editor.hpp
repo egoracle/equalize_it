@@ -1,19 +1,17 @@
 #pragma once
 
+#include "../shared/shared.hpp"
+#include "../widgets/widgets.hpp"
 #include "processor.hpp"
 
-#include <juce_audio_processors/juce_audio_processors.h>
-
-class AppEditor : public juce::AudioProcessorEditor {
+class AppEditor : public BaseEditor {
 public:
   AppEditor(AppProcessor &audioProcessor);
-  ~AppEditor() override;
 
   void paint(juce::Graphics &g) override;
-  void resized() override;
 
 private:
-  AppProcessor &audioProcessor;
+  Header header;
 
   JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(AppEditor)
 };

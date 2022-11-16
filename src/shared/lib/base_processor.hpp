@@ -41,6 +41,6 @@ public:
   virtual void getStateInformation(juce::MemoryBlock &destData) {}
   virtual void setStateInformation(const void *data, int sizeInBytes) {}
 
-private:
+protected:
   JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(BaseProcessor)
 };
