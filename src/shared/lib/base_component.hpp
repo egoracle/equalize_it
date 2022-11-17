@@ -1,5 +1,7 @@
 #pragma once
 
+#include "base_processor.hpp"
+
 #include <juce_gui_basics/juce_gui_basics.h>
 
 class BaseComponent : public juce::Component {
@@ -9,7 +11,7 @@ public:
   using Px = juce::Grid::Px;
 
 public:
-  BaseComponent() : juce::Component() {}
+  BaseComponent() {}
   virtual ~BaseComponent() {}
 
   virtual void paint(juce::Graphics &g) {}

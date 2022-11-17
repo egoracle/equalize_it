@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../shared/shared.hpp"
+#include "equalizer/processor.hpp"
 
 #include <juce_audio_processors/juce_audio_processors.h>
 
@@ -23,9 +24,12 @@ public:
   void initializeGraph();
   void connectAudioNodes();
 
+  EqualizerProcessor &getEqualizerProcessor();
+
 private:
   std::unique_ptr<juce::AudioProcessorGraph> processorGraph;
 
   Node::Ptr audioInputNode;
+  Node::Ptr equalizerNode;
   Node::Ptr audioOutputNode;
 };

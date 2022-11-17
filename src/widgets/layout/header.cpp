@@ -1,16 +1,14 @@
 #include "header.hpp"
 
 Header::Container::Container() {
-  logo.setText("Equalizer");
-
   grid.templateRows = {Track(Fr(1))};
   grid.templateColumns = {Track(Fr(1)), Track(Fr(1)), Track(Fr(1))};
-  grid.items = {juce::GridItem(), juce::GridItem(logo), juce::GridItem()};
+  grid.items = {juce::GridItem(), juce::GridItem(), juce::GridItem()};
 
   resized();
 }
 
-Header::Header() : BaseComponent() {
+Header::Header() {
   addAndMakeVisible(container);
 
   grid.templateRows = {Track(Fr(1))};

@@ -32,6 +32,8 @@ void AppProcessor::initializeGraph() {
   audioInputNode =
       processorGraph->addNode(std::make_unique<AudioGraphIOProcessor>(
           AudioGraphIOProcessor::audioInputNode));
+  equalizerNode =
+      processorGraph->addNode(std::make_unique<EqualizerProcessor>());
   audioOutputNode =
       processorGraph->addNode(std::make_unique<AudioGraphIOProcessor>(
           AudioGraphIOProcessor::audioOutputNode));
@@ -41,7 +43,14 @@ void AppProcessor::initializeGraph() {
 
 void AppProcessor::connectAudioNodes() {
   for (int channel = 0; channel < 2; ++channel) {
-    processorGraph->addConnection({{audioInputNode->nodeID, channel},
-                                   {audioOutputNode->nodeID, channel}});
+    processorGraph->addConnection(
+        {{audioInputNode->nodeID, channel}, {equalizerNode->nodeID, channel}});
+    processorGraph->addConnection(
+        {{equalizerNode->nodeID, channel}, {audioOutputNode->nodeID, channel}});
   }
+}
+
+EqualizerProcessor &AppProcessor::getEqualizerProcessor() {
+  return *dynamic_cast<EqualizerProcessor *>(
+      equalizerNode.get()->getProcessor());
 }
