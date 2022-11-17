@@ -2,14 +2,15 @@
 
 #include "../../../shared/shared.hpp"
 #include "../processor.hpp"
+#include "spectrum.hpp"
 
 #include <map>
 
 class EqualizerPlot : public BaseComponent {
 public:
-  class PlotGrid : public BaseComponent {
+  class GridPlot : public BaseComponent {
   public:
-    PlotGrid();
+    GridPlot();
 
     void paint(juce::Graphics &g);
 
@@ -17,9 +18,9 @@ public:
     std::map<int, float> xLogFrequencies;
   };
 
-  class PlotAxisX : public BaseComponent {
+  class AxisXPlot : public BaseComponent {
   public:
-    PlotAxisX();
+    AxisXPlot();
 
     void paint(juce::Graphics &g);
 
@@ -30,9 +31,14 @@ public:
 public:
   EqualizerPlot(BaseProcessor &audioProcessor);
 
+  void resized() override;
+
 private:
   BaseProcessor &audioProcessor;
 
-  PlotGrid plotGrid;
-  PlotAxisX plotAxisX;
+  GridPlot gridPlot;
+  AxisXPlot axisXPlot;
+  SpectrumPlot spectrumPlot;
+
+  juce::Grid spectrumGrid;
 };

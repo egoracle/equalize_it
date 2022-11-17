@@ -1,6 +1,6 @@
 #include "plot.hpp"
 
-EqualizerPlot::PlotGrid::PlotGrid() {
+EqualizerPlot::GridPlot::GridPlot() {
   for (int order = 0; order <= 5; order++) {
     for (int i = (order == 0 ? 10 : 2); i <= (order == 5 ? 2 : 10); i++) {
       int freq = i * pow(10, order);
@@ -11,7 +11,7 @@ EqualizerPlot::PlotGrid::PlotGrid() {
   }
 }
 
-void EqualizerPlot::PlotGrid::paint(juce::Graphics &g) {
+void EqualizerPlot::GridPlot::paint(juce::Graphics &g) {
   g.setColour(juce::Colour::fromString("#FFDBDBDB"));
 
   for (auto const &[freq, normFreq] : xLogFrequencies) {
@@ -24,7 +24,7 @@ void EqualizerPlot::PlotGrid::paint(juce::Graphics &g) {
   g.drawRect(box);
 }
 
-EqualizerPlot::PlotAxisX::PlotAxisX() {
+EqualizerPlot::AxisXPlot::AxisXPlot() {
   for (int order = 0; order <= 5; order++) {
     for (int i : {2, 5, 10}) {
       int freq = i * pow(10, order);
@@ -39,7 +39,7 @@ EqualizerPlot::PlotAxisX::PlotAxisX() {
   }
 }
 
-void EqualizerPlot::PlotAxisX::paint(juce::Graphics &g) {
+void EqualizerPlot::AxisXPlot::paint(juce::Graphics &g) {
   g.setColour(juce::Colour::fromString("#FF363636"));
 
   for (auto const &[freq, stringFreq] : labelFrequencies) {
@@ -52,14 +52,26 @@ void EqualizerPlot::PlotAxisX::paint(juce::Graphics &g) {
 }
 
 EqualizerPlot::EqualizerPlot(BaseProcessor &audioProcessor)
-    : BaseComponent(), audioProcessor(audioProcessor) {
-  addAndMakeVisible(plotGrid);
-  addAndMakeVisible(plotAxisX);
+    : BaseComponent(), audioProcessor(audioProcessor),
+      spectrumPlot(audioProcessor) {
+  addAndMakeVisible(gridPlot);
+  addAndMakeVisible(axisXPlot);
+  addAndMakeVisible(spectrumPlot);
 
   grid.templateRows = {Track(Fr(1)), Track(Px(8)), Track(Px(16))};
   grid.templateColumns = {Track(Fr(1))};
-  grid.items = {juce::GridItem(plotGrid), juce::GridItem(),
-                juce::GridItem(plotAxisX)};
+  grid.items = {juce::GridItem(gridPlot), juce::GridItem(),
+                juce::GridItem(axisXPlot)};
+
+  spectrumGrid.templateRows = {Track(Fr(1)), Track(Px(24))};
+  spectrumGrid.templateColumns = {Track(Fr(1))};
+  spectrumGrid.items = {juce::GridItem(spectrumPlot)};
 
   resized();
+}
+
+void EqualizerPlot::resized() {
+  grid.performLayout(getLocalBounds());
+  // spectrumPlot.setBounds(getLocalBounds());
+  spectrumGrid.performLayout(getLocalBounds());
 }
