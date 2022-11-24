@@ -1,10 +1,16 @@
 #include "spectrum.hpp"
 
+#include <cmath>
+
 SpectrumPlot::SpectrumPlot(BaseProcessor &audioProcessor)
     : audioProcessor(audioProcessor), window(fftSize),
       spectrogram(fftSize, window) {
   setAudioChannels(2, 0);
   startTimerHz(30);
+
+  for (int i = 0; i < fftSize; i++) {
+    prevAmplitudes[i] = 0;
+  }
 }
 
 SpectrumPlot::~SpectrumPlot() { shutdownAudio(); }
@@ -39,7 +45,11 @@ void SpectrumPlot::pushNextSampleIntoFifo(float sample) noexcept {
       nextFFTBlockReady = true;
     }
 
-    fifoIndex = 0;
+    for (int i = 0; i < fftSize - hopSize; i++) {
+      fifo[i] = fifo[hopSize + i];
+    }
+
+    fifoIndex = fftSize - hopSize - 1;
   }
 
   fifo[fifoIndex++] = sample;

@@ -6,7 +6,7 @@
 
 class SpectrumPlot : public juce::AudioAppComponent, private juce::Timer {
 public:
-  enum { fftSize = 4096 };
+  enum { fftSize = 16384, hopSize = 512 };
 
   SpectrumPlot(BaseProcessor &audioProcessor);
   ~SpectrumPlot() override;
@@ -34,7 +34,9 @@ private:
   int fifoIndex = 0;
   float fifo[fftSize];
   bool nextFFTBlockReady = false;
+  float prevAmplitudes[fftSize];
   float amplitudes[fftSize];
+  float avgAmplitudes[fftSize];
 
   JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(SpectrumPlot)
 };
