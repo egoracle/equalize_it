@@ -1,8 +1,8 @@
 #pragma once
 
-#include "../../shared/shared.hpp"
 #include "plot/plot.hpp"
 #include "processor.hpp"
+#include "shared.hpp"
 
 class EqualizerEditor : public BaseComponent {
 public:

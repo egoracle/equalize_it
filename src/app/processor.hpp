@@ -1,7 +1,7 @@
 #pragma once
 
-#include "../shared/shared.hpp"
 #include "equalizer/processor.hpp"
+#include "shared.hpp"
 
 #include <juce_audio_processors/juce_audio_processors.h>
 

@@ -1,8 +1,8 @@
 #pragma once
 
-#include "../widgets/widgets.hpp"
 #include "equalizer/editor.hpp"
 #include "processor.hpp"
+#include "widgets.hpp"
 
 #include <juce_audio_processors/juce_audio_processors.h>
 
