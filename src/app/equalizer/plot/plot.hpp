@@ -1,7 +1,7 @@
 #pragma once
 
-#include "../../../shared/shared.hpp"
 #include "../processor.hpp"
+#include "shared.hpp"
 #include "spectrum.hpp"
 
 #include <map>

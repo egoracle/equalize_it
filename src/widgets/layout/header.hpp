@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../../shared/shared.hpp"
+#include "shared.hpp"
 
 class Header : public BaseComponent {
 public:

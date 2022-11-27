@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../../../shared/shared.hpp"
+#include "shared.hpp"
 
 #include <juce_audio_utils/juce_audio_utils.h>
 
