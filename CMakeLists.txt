@@ -7,6 +7,8 @@ set(CMAKE_CXX_STANDARD 20)
 
 add_subdirectory(external)
 
+add_subdirectory(public)
+
 add_subdirectory(src)
 
 if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")

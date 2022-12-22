@@ -2,6 +2,7 @@
 
 #include "equalizer/editor.hpp"
 #include "processor.hpp"
+#include "shared.hpp"
 #include "widgets.hpp"
 
 #include <juce_audio_processors/juce_audio_processors.h>
@@ -26,6 +27,8 @@ private:
   juce::Grid grid;
   Header header;
   EqualizerEditor equalizerEditor;
+
+  RubikFontLookAndFeel fontLookAndFeel;
 
   JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(AppEditor)
 };

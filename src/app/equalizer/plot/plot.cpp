@@ -31,7 +31,7 @@ EqualizerPlot::AxisXPlot::AxisXPlot() {
 
       if (freq >= 1000) {
         labelFrequencies.insert(std::pair<int, juce::String>(
-            freq, juce::String(freq / 1000) + "k"));
+            freq, juce::String(freq / 1000) + "K"));
       } else {
         labelFrequencies.insert(std::pair<int, juce::String>(freq, freq));
       }

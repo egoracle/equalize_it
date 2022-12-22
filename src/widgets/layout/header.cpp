@@ -1,9 +1,16 @@
 #include "header.hpp"
 
 Header::Container::Container() {
+  addAndMakeVisible(logo);
+
+  logo.setText("Spectrum", juce::dontSendNotification);
+  logo.setFont(juce::Font(20.f));
+  logo.setColour(juce::Label::textColourId, juce::Colours::tomato);
+  logo.setJustificationType(juce::Justification::left);
+
   grid.templateRows = {Track(Fr(1))};
   grid.templateColumns = {Track(Fr(1)), Track(Fr(1)), Track(Fr(1))};
-  grid.items = {juce::GridItem(), juce::GridItem(), juce::GridItem()};
+  grid.items = {juce::GridItem(logo), juce::GridItem(), juce::GridItem()};
 
   resized();
 }

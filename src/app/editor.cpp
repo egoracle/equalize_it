@@ -4,6 +4,8 @@ AppEditor::AppEditor(AppProcessor &audioProcessor)
     : juce::AudioProcessorEditor(&audioProcessor),
       audioProcessor(audioProcessor),
       equalizerEditor(audioProcessor.getEqualizerProcessor()) {
+  juce::LookAndFeel::setDefaultLookAndFeel(&fontLookAndFeel);
+
   setResizable(true, true);
   setSize(1280, 720);
 
@@ -20,7 +22,7 @@ AppEditor::AppEditor(AppProcessor &audioProcessor)
   resized();
 }
 
-AppEditor::~AppEditor() {}
+AppEditor::~AppEditor() { juce::LookAndFeel::setDefaultLookAndFeel(nullptr); }
 
 void AppEditor::paint(juce::Graphics &g) { g.fillAll(juce::Colours::white); }
 
