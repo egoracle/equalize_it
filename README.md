@@ -1,2 +1,1 @@
-# equalizer
-vst plugin
+# Spectrum analyzer
