@@ -1,17 +1,17 @@
 #include "editor.hpp"
 
-EqualizerEditor::Container::Container(EqualizerProcessor &audioProcessor)
-    : audioProcessor(audioProcessor), equalizerPlot(audioProcessor) {
-  addAndMakeVisible(equalizerPlot);
+AnalyzerEditor::Container::Container(AnalyzerProcessor &audioProcessor)
+    : audioProcessor(audioProcessor), analyzerPlot(audioProcessor) {
+  addAndMakeVisible(analyzerPlot);
 
   grid.templateRows = {Track(Fr(1))};
   grid.templateColumns = {Track(Fr(1))};
-  grid.items = {juce::GridItem(equalizerPlot)};
+  grid.items = {juce::GridItem(analyzerPlot)};
 
   resized();
 }
 
-EqualizerEditor::EqualizerEditor(EqualizerProcessor &audioProcessor)
+AnalyzerEditor::AnalyzerEditor(AnalyzerProcessor &audioProcessor)
     : audioProcessor(audioProcessor), container(audioProcessor) {
   addAndMakeVisible(container);
 
@@ -21,7 +21,7 @@ EqualizerEditor::EqualizerEditor(EqualizerProcessor &audioProcessor)
   resized();
 }
 
-void EqualizerEditor::resized() {
+void AnalyzerEditor::resized() {
   grid.templateColumns = {
       Track(Fr(1)), Track(Px(juce::jmin<float>(containerWidth, getWidth()))),
       Track(Fr(1))};

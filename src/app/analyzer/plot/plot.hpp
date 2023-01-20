@@ -6,9 +6,9 @@
 
 #include <map>
 
-class EqualizerPlot : public BaseComponent {
+class AnalyzerPlot : public shared::lib::BaseComponent {
 public:
-  class GridPlot : public BaseComponent {
+  class GridPlot : public shared::lib::BaseComponent {
   public:
     GridPlot();
 
@@ -18,7 +18,7 @@ public:
     std::map<int, float> xLogFrequencies;
   };
 
-  class AxisXPlot : public BaseComponent {
+  class AxisXPlot : public shared::lib::BaseComponent {
   public:
     AxisXPlot();
 
@@ -28,16 +28,24 @@ public:
     std::map<int, juce::String> labelFrequencies;
   };
 
+  class AxisYPlot : public BaseComponent {
+  public:
+    AxisYPlot(){};
+
+    void paint(juce::Graphics &g);
+  };
+
 public:
-  EqualizerPlot(BaseProcessor &audioProcessor);
+  AnalyzerPlot(shared::lib::BaseProcessor &audioProcessor);
 
   void resized() override;
 
 private:
-  BaseProcessor &audioProcessor;
+  shared::lib::BaseProcessor &audioProcessor;
 
   GridPlot gridPlot;
   AxisXPlot axisXPlot;
+  AxisYPlot axisYPlot;
   SpectrumPlot spectrumPlot;
 
   juce::Grid spectrumGrid;

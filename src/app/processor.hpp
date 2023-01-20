@@ -1,11 +1,13 @@
 #pragma once
 
-#include "equalizer/processor.hpp"
+#include "analyzer/processor.hpp"
 #include "shared.hpp"
 
 #include <juce_audio_processors/juce_audio_processors.h>
 
-class AppProcessor : public BaseProcessor {
+namespace app {
+
+class AppProcessor : public shared::lib::BaseProcessor {
 public:
   using AudioGraphIOProcessor =
       juce::AudioProcessorGraph::AudioGraphIOProcessor;
@@ -24,12 +26,14 @@ public:
   void initializeGraph();
   void connectAudioNodes();
 
-  EqualizerProcessor &getEqualizerProcessor();
+  AnalyzerProcessor &getAnalyzerProcessor();
 
 private:
   std::unique_ptr<juce::AudioProcessorGraph> processorGraph;
 
   Node::Ptr audioInputNode;
-  Node::Ptr equalizerNode;
+  Node::Ptr analyzerNode;
   Node::Ptr audioOutputNode;
 };
+
+} // namespace app

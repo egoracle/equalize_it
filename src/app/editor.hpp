@@ -1,11 +1,13 @@
 #pragma once
 
-#include "equalizer/editor.hpp"
+#include "analyzer/editor.hpp"
 #include "processor.hpp"
 #include "shared.hpp"
 #include "widgets.hpp"
 
 #include <juce_audio_processors/juce_audio_processors.h>
+
+namespace app {
 
 class AppEditor : public juce::AudioProcessorEditor {
 public:
@@ -25,10 +27,12 @@ private:
   AppProcessor &audioProcessor;
 
   juce::Grid grid;
-  Header header;
-  EqualizerEditor equalizerEditor;
+  widgets::Header header;
+  AnalyzerEditor analyzerEditor;
 
-  RubikFontLookAndFeel fontLookAndFeel;
+  shared::ui::RubikFontLookAndFeel fontLookAndFeel;
 
   JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(AppEditor)
 };
+
+} // namespace app

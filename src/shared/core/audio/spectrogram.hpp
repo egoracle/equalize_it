@@ -5,6 +5,8 @@
 #include <complex>
 #include <valarray>
 
+namespace shared::core::audio {
+
 class Spectrogram {
 public:
   Spectrogram(int fftSize, Window &window);
@@ -20,3 +22,5 @@ private:
   Window &window;
   std::valarray<std::complex<double>> phasors;
 };
+
+} // namespace shared::core::audio

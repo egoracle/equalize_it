@@ -1,14 +1,16 @@
 #include "processor.hpp"
 #include "editor.hpp"
 
-AppProcessor::AppProcessor()
+app::AppProcessor::AppProcessor()
     : BaseProcessor(), processorGraph(new juce::AudioProcessorGraph()) {}
 
-const juce::String AppProcessor::getName() const { return JucePlugin_Name; }
+const juce::String app::AppProcessor::getName() const {
+  return JucePlugin_Name;
+}
 
-int AppProcessor::getNumPrograms() { return 1; }
+int app::AppProcessor::getNumPrograms() { return 1; }
 
-void AppProcessor::prepareToPlay(double sampleRate, int samplesPerBlock) {
+void app::AppProcessor::prepareToPlay(double sampleRate, int samplesPerBlock) {
   processorGraph->setPlayConfigDetails(getMainBusNumInputChannels(),
                                        getMainBusNumOutputChannels(),
                                        sampleRate, samplesPerBlock);
@@ -18,22 +20,23 @@ void AppProcessor::prepareToPlay(double sampleRate, int samplesPerBlock) {
   initializeGraph();
 }
 
-void AppProcessor::releaseResources() { processorGraph->releaseResources(); }
+void app::AppProcessor::releaseResources() {
+  processorGraph->releaseResources();
+}
 
-bool AppProcessor::hasEditor() const { return true; }
+bool app::AppProcessor::hasEditor() const { return true; }
 
-juce::AudioProcessorEditor *AppProcessor::createEditor() {
+juce::AudioProcessorEditor *app::AppProcessor::createEditor() {
   return new AppEditor(*this);
 }
 
-void AppProcessor::initializeGraph() {
+void app::AppProcessor::initializeGraph() {
   processorGraph->clear();
 
   audioInputNode =
       processorGraph->addNode(std::make_unique<AudioGraphIOProcessor>(
           AudioGraphIOProcessor::audioInputNode));
-  equalizerNode =
-      processorGraph->addNode(std::make_unique<EqualizerProcessor>());
+  analyzerNode = processorGraph->addNode(std::make_unique<AnalyzerProcessor>());
   audioOutputNode =
       processorGraph->addNode(std::make_unique<AudioGraphIOProcessor>(
           AudioGraphIOProcessor::audioOutputNode));
@@ -41,16 +44,15 @@ void AppProcessor::initializeGraph() {
   connectAudioNodes();
 }
 
-void AppProcessor::connectAudioNodes() {
+void app::AppProcessor::connectAudioNodes() {
   for (int channel = 0; channel < 2; ++channel) {
     processorGraph->addConnection(
-        {{audioInputNode->nodeID, channel}, {equalizerNode->nodeID, channel}});
+        {{audioInputNode->nodeID, channel}, {analyzerNode->nodeID, channel}});
     processorGraph->addConnection(
-        {{equalizerNode->nodeID, channel}, {audioOutputNode->nodeID, channel}});
+        {{analyzerNode->nodeID, channel}, {audioOutputNode->nodeID, channel}});
   }
 }
 
-EqualizerProcessor &AppProcessor::getEqualizerProcessor() {
-  return *dynamic_cast<EqualizerProcessor *>(
-      equalizerNode.get()->getProcessor());
+AnalyzerProcessor &app::AppProcessor::getAnalyzerProcessor() {
+  return *dynamic_cast<AnalyzerProcessor *>(analyzerNode.get()->getProcessor());
 }

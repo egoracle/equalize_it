@@ -3,10 +3,10 @@
 #include <cmath>
 #include <numbers>
 
-Spectrogram::Spectrogram(int fftSize, Window &window)
+shared::core::audio::Spectrogram::Spectrogram(int fftSize, Window &window)
     : fftSize(fftSize), window(window), phasors(fftSize) {}
 
-void Spectrogram::update(float signal[]) {
+void shared::core::audio::Spectrogram::update(float signal[]) {
   for (int i = 0; i < fftSize; i++) {
     phasors[i] = std::complex<double>(window(i) * signal[i], 0);
   }
@@ -14,7 +14,8 @@ void Spectrogram::update(float signal[]) {
   fft(phasors);
 }
 
-void Spectrogram::fft(std::valarray<std::complex<double>> &fftData) {
+void shared::core::audio::Spectrogram::fft(
+    std::valarray<std::complex<double>> &fftData) {
   const int n = fftData.size();
   if (n == 1) {
     return;
@@ -34,7 +35,7 @@ void Spectrogram::fft(std::valarray<std::complex<double>> &fftData) {
   }
 }
 
-void Spectrogram::unloadAmplitudes(float amplitudes[]) {
+void shared::core::audio::Spectrogram::unloadAmplitudes(float amplitudes[]) {
   for (int i = 0; i < fftSize; i++) {
     amplitudes[i] = std::abs(phasors[i]) / fftSize;
   }

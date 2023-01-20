@@ -4,6 +4,8 @@
 
 #include <juce_gui_basics/juce_gui_basics.h>
 
+namespace shared::lib {
+
 class BaseComponent : public juce::Component {
 public:
   using Track = juce::Grid::TrackInfo;
@@ -22,3 +24,5 @@ protected:
 
   JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(BaseComponent)
 };
+
+} // namespace shared::lib

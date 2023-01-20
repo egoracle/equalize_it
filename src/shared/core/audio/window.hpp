@@ -1,5 +1,7 @@
 #pragma once
 
+namespace shared::core::audio {
+
 class Window {
 public:
   Window(int width) : width(width) {}
@@ -23,3 +25,12 @@ public:
 
   float operator()(int sampleIndex);
 };
+
+class NuttallWindow : public Window {
+public:
+  NuttallWindow(int width) : Window(width) {}
+
+  float operator()(int sampleIndex);
+};
+
+} // namespace shared::core::audio

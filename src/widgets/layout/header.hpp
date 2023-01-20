@@ -4,9 +4,11 @@
 
 #include "shared.hpp"
 
-class Header : public BaseComponent {
+namespace widgets {
+
+class Header : public shared::lib::BaseComponent {
 public:
-  class Container : public BaseComponent {
+  class Container : public shared::lib::BaseComponent {
   public:
     Container();
 
@@ -25,3 +27,5 @@ public:
 private:
   Container container;
 };
+
+} // namespace widgets

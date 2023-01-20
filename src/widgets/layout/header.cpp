@@ -1,21 +1,21 @@
 #include "header.hpp"
 
-Header::Container::Container() {
+widgets::Header::Container::Container() {
   addAndMakeVisible(logo);
 
-  logo.setText("Spectrum", juce::dontSendNotification);
-  logo.setFont(juce::Font(20.f));
-  logo.setColour(juce::Label::textColourId, juce::Colours::tomato);
-  logo.setJustificationType(juce::Justification::left);
+  logo.setText("Spectrum Analyzer", juce::dontSendNotification);
+  logo.setFont(juce::Font(24.f));
+  logo.setColour(juce::Label::textColourId, shared::ui::Colours::primary);
+  logo.setJustificationType(juce::Justification::centred);
 
   grid.templateRows = {Track(Fr(1))};
   grid.templateColumns = {Track(Fr(1)), Track(Fr(1)), Track(Fr(1))};
-  grid.items = {juce::GridItem(logo), juce::GridItem(), juce::GridItem()};
+  grid.items = {juce::GridItem(), juce::GridItem(logo), juce::GridItem()};
 
   resized();
 }
 
-Header::Header() {
+widgets::Header::Header() {
   addAndMakeVisible(container);
 
   grid.templateRows = {Track(Fr(1))};
@@ -24,14 +24,11 @@ Header::Header() {
   resized();
 }
 
-void Header::paint(juce::Graphics &g) {
+void widgets::Header::paint(juce::Graphics &g) {
   g.fillAll(juce::Colours::white);
-
-  g.setColour(juce::Colour::fromString("#FFEEEEEE"));
-  g.drawHorizontalLine(getHeight() - 1, 0, getWidth());
 }
 
-void Header::resized() {
+void widgets::Header::resized() {
   grid.templateColumns = {
       Track(Fr(1)), Track(Px(juce::jmin<float>(containerWidth, getWidth()))),
       Track(Fr(1))};

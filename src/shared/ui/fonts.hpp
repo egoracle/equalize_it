@@ -3,6 +3,8 @@
 #include <BinaryData.h>
 #include <juce_gui_basics/juce_gui_basics.h>
 
+namespace shared::ui {
+
 class RubikFontLookAndFeel : public juce::LookAndFeel_V4 {
 private:
   juce::Typeface::Ptr getTypefaceForFont(const juce::Font &f) override {
@@ -19,3 +21,5 @@ public:
     return typeface;
   }
 };
+
+} // namespace shared::ui

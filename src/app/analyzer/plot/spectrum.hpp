@@ -6,9 +6,9 @@
 
 class SpectrumPlot : public juce::AudioAppComponent, private juce::Timer {
 public:
-  enum { fftSize = 16384, hopSize = 512 };
+  enum { fftSize = 16384, hopSize = 2048 };
 
-  SpectrumPlot(BaseProcessor &audioProcessor);
+  SpectrumPlot(shared::lib::BaseProcessor &audioProcessor);
   ~SpectrumPlot() override;
 
   void prepareToPlay(int, double) override {}
@@ -26,17 +26,18 @@ public:
   void resized() override {}
 
 private:
-  BaseProcessor &audioProcessor;
+  shared::lib::BaseProcessor &audioProcessor;
 
-  HammingWindow window;
-  Spectrogram spectrogram;
+  shared::core::audio::NuttallWindow window;
+  shared::core::audio::Spectrogram spectrogram;
 
   int fifoIndex = 0;
   float fifo[fftSize];
   bool nextFFTBlockReady = false;
-  float prevAmplitudes[fftSize];
   float amplitudes[fftSize];
-  float avgAmplitudes[fftSize];
+
+  float cacheDecay = 0.1f;
+  std::vector<float> cache;
 
   JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(SpectrumPlot)
 };
