@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.21)
 
-set(PROJECT_NAME "SpectrumAnalyzer")
+set(COMPANY_NAME "Equalize It")
+set(PRODUCT_NAME "Equalize It")
+set(PROJECT_NAME "equalize_it")
 project(${PROJECT_NAME} VERSION 0.0.1)
 
 set(CMAKE_CXX_STANDARD 20)

@@ -1,6 +1,6 @@
 #pragma once
 
-namespace shared::core::audio {
+namespace dsp {
 
 class Window {
 public:
@@ -33,4 +33,4 @@ public:
   float operator()(int sampleIndex);
 };
 
-} // namespace shared::core::audio
+}; // namespace dsp

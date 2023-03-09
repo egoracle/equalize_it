@@ -3,17 +3,17 @@
 #include <cmath>
 #include <numbers>
 
-float shared::core::audio::HannWindow::operator()(int sampleIndex) {
+float dsp::HannWindow::operator()(int sampleIndex) {
   return 0.5f *
          (1 - std::cos(2 * std::numbers::pi * sampleIndex / (width - 1)));
 }
 
-float shared::core::audio::HammingWindow::operator()(int sampleIndex) {
+float dsp::HammingWindow::operator()(int sampleIndex) {
   return 0.53836f -
          0.46164f * std::cos(2 * std::numbers::pi * sampleIndex / (width - 1));
 }
 
-float shared::core::audio::NuttallWindow::operator()(int sampleIndex) {
+float dsp::NuttallWindow::operator()(int sampleIndex) {
   float a0 = 0.355768f;
   float a1 = 0.487396f;
   float a2 = 0.144232f;

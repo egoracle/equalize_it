@@ -1,1 +1,1 @@
-# Spectrum analyzer
+# Equalize It

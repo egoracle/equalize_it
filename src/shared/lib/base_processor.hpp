@@ -2,8 +2,6 @@
 
 #include <juce_audio_processors/juce_audio_processors.h>
 
-namespace shared::lib {
-
 class BaseProcessor : public juce::AudioProcessor {
 public:
   BaseProcessor()
@@ -46,5 +44,3 @@ public:
 protected:
   JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(BaseProcessor)
 };
-
-} // namespace shared::lib

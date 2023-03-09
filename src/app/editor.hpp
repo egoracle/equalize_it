@@ -1,38 +1,29 @@
 #pragma once
 
-#include "analyzer/editor.hpp"
-#include "processor.hpp"
-#include "shared.hpp"
-#include "widgets.hpp"
-
 #include <juce_audio_processors/juce_audio_processors.h>
 
-namespace app {
+#include "pages.hpp"
+#include "processor.hpp"
 
 class AppEditor : public juce::AudioProcessorEditor {
 public:
-  using Track = juce::Grid::TrackInfo;
-  using Fr = juce::Grid::Fr;
-  using Px = juce::Grid::Px;
+  enum {
+    minWidth = 720,
+    minHeight = 480,
+    defaultWidth = 1280,
+    defaultHeight = 720
+  };
 
 public:
-  AppEditor(AppProcessor &audioProcessor);
-
+  explicit AppEditor(AppProcessor &);
   ~AppEditor() override;
 
-  void paint(juce::Graphics &g) override;
+  void paint(juce::Graphics &) override;
   void resized() override;
 
 private:
-  AppProcessor &audioProcessor;
-
-  juce::Grid grid;
-  widgets::Header header;
-  AnalyzerEditor analyzerEditor;
-
-  shared::ui::RubikFontLookAndFeel fontLookAndFeel;
+  HomePage homePage;
+  AppProcessor &appProcessor;
 
   JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(AppEditor)
 };
-
-} // namespace app
