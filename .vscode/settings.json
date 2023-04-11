@@ -89,7 +89,8 @@
         "ranges": "cpp",
         "span": "cpp",
         "bitset": "cpp",
-        "valarray": "cpp"
+        "valarray": "cpp",
+        "numbers": "cpp"
     },
     "cmake.configureOnOpen": true
 }

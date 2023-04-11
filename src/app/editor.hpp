@@ -1,11 +1,9 @@
 #pragma once
 
-#include <juce_audio_processors/juce_audio_processors.h>
-
 #include "pages.hpp"
-#include "processor.hpp"
+#include "shared.hpp"
 
-class AppEditor : public juce::AudioProcessorEditor {
+class PluginEditor : public juce::AudioProcessorEditor {
 public:
   enum {
     minWidth = 720,
@@ -15,15 +13,14 @@ public:
   };
 
 public:
-  explicit AppEditor(AppProcessor &);
-  ~AppEditor() override;
+  explicit PluginEditor(PluginProcessor &);
+  ~PluginEditor() override;
 
   void paint(juce::Graphics &) override;
   void resized() override;
 
 private:
   HomePage homePage;
-  AppProcessor &appProcessor;
 
-  JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(AppEditor)
+  JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(PluginEditor)
 };

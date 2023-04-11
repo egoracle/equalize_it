@@ -1,5 +1,5 @@
 #pragma once
 
 #include "dsp/dsp.hpp"
-#include "lib/lib.hpp"
+#include "proccessors/processors.hpp"
 #include "ui/ui.hpp"

@@ -1,6 +1,6 @@
 #include "equalizer.hpp"
 
-Equalizer::Equalizer() : LayoutComponent() {
+Equalizer::Equalizer(PluginProcessor &pluginProcessor) {
   addAndMakeVisible(grid);
 
   resized();

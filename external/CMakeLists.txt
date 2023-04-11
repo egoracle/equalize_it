@@ -27,11 +27,3 @@ set(JUCE_DEPENDENCIES
 
 # Friz
 juce_add_module(${CMAKE_CURRENT_LIST_DIR}/friz/Source/friz)
-# file(GLOB FRIZ_SOURCES CONFIGURE_DEPENDS 
-#   ${CMAKE_CURRENT_LIST_DIR}/friz/Source/friz/friz.h 
-#   ${CMAKE_CURRENT_LIST_DIR}/friz/Source/friz/friz.cpp
-#   ${CMAKE_CURRENT_LIST_DIR}/friz/Source/friz/control/*.h
-#   ${CMAKE_CURRENT_LIST_DIR}/friz/Source/friz/control/*.cpp
-#   ${CMAKE_CURRENT_LIST_DIR}/friz/Source/friz/curves/*.h
-#   ${CMAKE_CURRENT_LIST_DIR}/friz/Source/friz/curves/*.cpp)
-# add_library(friz SHARED ${FRIZ_SOURCES})

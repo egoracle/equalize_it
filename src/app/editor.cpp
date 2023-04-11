@@ -1,7 +1,7 @@
 #include "editor.hpp"
 
-AppEditor::AppEditor(AppProcessor &p)
-    : juce::AudioProcessorEditor(&p), appProcessor(p) {
+PluginEditor::PluginEditor(PluginProcessor &p)
+    : juce::AudioProcessorEditor(&p), homePage(p) {
   setSize(defaultWidth, defaultHeight);
   setResizable(true, true);
 
@@ -16,8 +16,8 @@ AppEditor::AppEditor(AppProcessor &p)
   resized();
 }
 
-AppEditor::~AppEditor() {}
+PluginEditor::~PluginEditor() {}
 
-void AppEditor::paint(juce::Graphics &) {}
+void PluginEditor::paint(juce::Graphics &) {}
 
-void AppEditor::resized() { homePage.setBounds(getLocalBounds()); }
+void PluginEditor::resized() { homePage.setBounds(getLocalBounds()); }

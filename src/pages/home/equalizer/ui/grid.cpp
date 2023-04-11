@@ -1,6 +1,6 @@
 #include "grid.hpp"
 
-Grid::Grid() : juce::Component() {
+Grid::Grid() {
   for (int order = 1; order <= 5; order++) {
     for (int i = 2; i < (order == 5 ? 2 : 10); i++) {
       int freq = i * int(pow(10, order));

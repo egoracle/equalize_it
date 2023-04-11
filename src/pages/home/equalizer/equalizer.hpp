@@ -6,7 +6,7 @@
 
 class Equalizer : public LayoutComponent {
 public:
-  Equalizer();
+  Equalizer(PluginProcessor &);
 
   void paint(juce::Graphics &) override;
   void resized() override;
