@@ -7,9 +7,8 @@ Gain::Gain(PluginProcessor &pluginProcessor) : levelMeters(pluginProcessor) {
   addAndMakeVisible(slider);
   addAndMakeVisible(levelMeters);
 
-  sliderAttachment =
-      std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(
-          pluginProcessor.getAPVTS(), "gain", slider);
+  sliderAttachment = std::make_unique<APVTS::SliderAttachment>(
+      pluginProcessor.getAPVTS(), GainParameters::getWetID(), slider);
 
   resized();
 }

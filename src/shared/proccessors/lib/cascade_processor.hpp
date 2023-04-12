@@ -1,6 +1,6 @@
 #pragma once
 
-#include "base.hpp"
+#include "base_processor.hpp"
 
 class CascadeProcessor : public BaseProcessor {
 public:
@@ -8,9 +8,7 @@ public:
       juce::AudioProcessorGraph::AudioGraphIOProcessor;
   using Node = juce::AudioProcessorGraph::Node;
 
-  CascadeProcessor() : audioGraph(new juce::AudioProcessorGraph()) {
-    initializeGraph();
-  }
+  CascadeProcessor() : audioGraph(new juce::AudioProcessorGraph()) {}
 
   virtual void prepareToPlay(double sampleRate, int samplesPerBlock) {
     BaseProcessor::prepareToPlay(sampleRate, samplesPerBlock);

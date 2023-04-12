@@ -14,7 +14,8 @@ public:
 
 private:
   int channel;
-  GainProcessor *processor;
+
+  PluginProcessor &pluginProcessor;
 
   float level;
 };

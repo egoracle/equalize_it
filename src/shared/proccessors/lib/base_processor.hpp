@@ -2,6 +2,8 @@
 
 #include <juce_audio_processors/juce_audio_processors.h>
 
+using APVTS = juce::AudioProcessorValueTreeState;
+
 class BaseProcessor : public juce::AudioProcessor {
 public:
   BaseProcessor()

@@ -1,10 +1,29 @@
 #include "gain.hpp"
 
-GainProcessor::GainProcessor(juce::AudioProcessorValueTreeState &state)
-    : apvts(state), rmsValueLeft(-70.0f), rmsValueRight(-70.0f) {}
+// GainParameters
+
+void GainParameters::addToLayout(APVTS::ParameterLayout &layout) {
+  layout.add(std::make_unique<juce::AudioParameterFloat>(
+      getWetID(), getWetName(), -12.0f, 12.0f, 0.0f));
+}
+
+inline juce::String GainParameters::getWetID() noexcept { return "gain_wet"; }
+
+inline juce::String GainParameters::getWetName() noexcept { return "Gain Wet"; }
+
+float GainParameters::getWetDbValue() {
+  jassert(wet != nullptr);
+
+  return juce::Decibels::decibelsToGain(wet->get());
+}
+
+// GainProcessor
+
+GainProcessor::GainProcessor(APVTS &apvts)
+    : params(extractGainParameters(apvts)) {}
 
 void GainProcessor::prepareToPlay(double, int) {
-  previousGainValue = *apvts.getRawParameterValue("gain");
+  previousWetValueDb = params.getWetDbValue();
 }
 
 void GainProcessor::processBlock(juce::AudioSampleBuffer &audioBuffer,
@@ -31,14 +50,21 @@ void GainProcessor::updateRmsValues(juce::AudioSampleBuffer &audioBuffer) {
 }
 
 void GainProcessor::applyGain(juce::AudioSampleBuffer &audioBuffer) {
-  float currentGainValue = *apvts.getRawParameterValue("gain");
+  float currentWetValueDb = params.getWetDbValue();
 
-  if (currentGainValue == previousGainValue) {
-    audioBuffer.applyGain(juce::Decibels::decibelsToGain(currentGainValue));
+  if (currentWetValueDb == previousWetValueDb) {
+    audioBuffer.applyGain(currentWetValueDb);
   } else {
     audioBuffer.applyGainRamp(0, audioBuffer.getNumSamples(),
-                              juce::Decibels::decibelsToGain(previousGainValue),
-                              juce::Decibels::decibelsToGain(currentGainValue));
-    previousGainValue = currentGainValue;
+                              previousWetValueDb, currentWetValueDb);
+    previousWetValueDb = currentWetValueDb;
   }
+}
+
+GainParameters GainProcessor::extractGainParameters(APVTS &apvts) {
+  GainParameters params;
+  params.wet = dynamic_cast<juce::AudioParameterFloat *>(
+      apvts.getParameter(GainParameters::getWetID()));
+
+  return params;
 }

@@ -1,8 +1,7 @@
 #include "level_meter.hpp"
 
-LevelMeter::LevelMeter(int channel, PluginProcessor &pluginProcessor)
-    : channel(channel), processor(pluginProcessor.getGainProcessor()),
-      level(-70.0f) {
+LevelMeter::LevelMeter(int ch, PluginProcessor &p)
+    : channel(ch), pluginProcessor(p), level(-70.0f) {
   startTimerHz(30);
 }
 
@@ -19,7 +18,11 @@ void LevelMeter::paint(juce::Graphics &g) {
 }
 
 void LevelMeter::timerCallback() {
-  level = processor->getRmsValue(channel);
+  auto gainProcessor = pluginProcessor.getGainProcessor();
+
+  if (gainProcessor) {
+    level = gainProcessor->getRmsValue(channel);
+  }
 
   repaint();
 }

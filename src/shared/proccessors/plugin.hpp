@@ -1,5 +1,6 @@
 #pragma once
 
+#include "filter.hpp"
 #include "gain.hpp"
 #include "lib/lib.hpp"
 
@@ -18,20 +19,21 @@ public:
   void setStateInformation(const void *, int) override;
 
   GainProcessor *getGainProcessor();
-  juce::AudioProcessorValueTreeState &getAPVTS();
+  APVTS &getAPVTS();
 
 protected:
   void initializeEffectNodes() override;
   void connectAudioNodes() override;
 
 private:
-  juce::AudioProcessorValueTreeState::ParameterLayout createParameterLayout();
+  APVTS::ParameterLayout createParameterLayout();
 
 private:
   std::function<juce::AudioProcessorEditor *(PluginProcessor *)>
       createEditorCallback;
 
-  juce::AudioProcessorValueTreeState apvts;
+  APVTS apvts;
 
   Node::Ptr gainNode;
+  Node::Ptr filterNode;
 };
