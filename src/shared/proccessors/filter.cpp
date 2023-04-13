@@ -17,15 +17,18 @@ void FilterParameters::addToLayout(APVTS::ParameterLayout &layout,
       1000.0f));
 
   layout.add(std::make_unique<juce::AudioParameterFloat>(
-      getPassPeakID(filterID), getPassPeakName(filterID), 0.1f, 10.0f, 1.0f));
+      getQualityID(filterID), getQualityName(filterID), 0.1f, 10.0f, 1.0f));
+
+  layout.add(std::make_unique<juce::AudioParameterFloat>(
+      getGainID(filterID), getGainName(filterID), -12.0f, 12.0f, 0.0f));
 }
 
 juce::String FilterParameters::getFilterTypeChoiceID(int filterID) noexcept {
-  return juce::String::formatted("filter_type_%d", filterID);
+  return juce::String::formatted("filter_%d_type", filterID);
 }
 
 juce::String FilterParameters::getFilterTypeChoiceName(int filterID) noexcept {
-  return juce::String::formatted("Filter Type %d", filterID);
+  return juce::String::formatted("Filter %d Type", filterID);
 }
 
 FilterType FilterParameters::getFilterType() {
@@ -35,11 +38,11 @@ FilterType FilterParameters::getFilterType() {
 }
 
 juce::String FilterParameters::getIsActiveID(int filterID) noexcept {
-  return juce::String::formatted("filter_active_%d", filterID);
+  return juce::String::formatted("filter_%d_active", filterID);
 }
 
 juce::String FilterParameters::getIsActiveName(int filterID) noexcept {
-  return juce::String::formatted("Filter Actrive %d", filterID);
+  return juce::String::formatted("Filter %d Actrive", filterID);
 }
 
 bool FilterParameters::getIsActiveValue() {
@@ -49,11 +52,11 @@ bool FilterParameters::getIsActiveValue() {
 }
 
 juce::String FilterParameters::getFrequencyID(int filterID) noexcept {
-  return juce::String::formatted("filter_frequency_%d", filterID);
+  return juce::String::formatted("filter_%d_frequency", filterID);
 }
 
 juce::String FilterParameters::getFrequencyName(int filterID) noexcept {
-  return juce::String::formatted("Filter Frequency %d", filterID);
+  return juce::String::formatted("Filter %d Frequency", filterID);
 }
 
 float FilterParameters::getFrequencyValue() {
@@ -62,18 +65,32 @@ float FilterParameters::getFrequencyValue() {
   return frequency->get();
 }
 
-juce::String FilterParameters::getPassPeakID(int filterID) noexcept {
-  return juce::String::formatted("filter_pass_peak_%d", filterID);
+juce::String FilterParameters::getQualityID(int filterID) noexcept {
+  return juce::String::formatted("filter_%d_quality", filterID);
 }
 
-juce::String FilterParameters::getPassPeakName(int filterID) noexcept {
-  return juce::String::formatted("Filter Pass Peak %d", filterID);
+juce::String FilterParameters::getQualityName(int filterID) noexcept {
+  return juce::String::formatted("Filter %d Quality", filterID);
 }
 
-float FilterParameters::getPassPeakValue() {
-  jassert(passPeak != nullptr);
+float FilterParameters::getQualityValue() {
+  jassert(quality != nullptr);
 
-  return passPeak->get();
+  return quality->get();
+}
+
+juce::String FilterParameters::getGainID(int filterID) noexcept {
+  return juce::String::formatted("filter_%d_gain", filterID);
+}
+
+juce::String FilterParameters::getGainName(int filterID) noexcept {
+  return juce::String::formatted("Filter %d Gain", filterID);
+}
+
+float FilterParameters::getGainFactorValue() {
+  jassert(gain != nullptr);
+
+  return juce::Decibels::decibelsToGain(gain->get());
 }
 
 // FilterProcessor
@@ -115,19 +132,21 @@ void FilterProcessor::updateFilter() {
 }
 
 FilterProcessor::IIRCoefficientsPtr FilterProcessor::getIIRCoefficients() {
+  float sr = float(getSampleRate());
   float freq = params.getFrequencyValue();
-  float res = params.getPassPeakValue();
+  float quality = params.getQualityValue();
+  float gainFactor = params.getGainFactorValue();
 
   IIRCoefficientsPtr iirCoefs;
   switch (params.getFilterType()) {
   case FilterType::LowPass:
-    iirCoefs = IIRCoefficients::makeLowPass(getSampleRate(), freq, res);
+    iirCoefs = IIRCoefficients::makeLowPass(sr, freq, quality);
     break;
   case FilterType::Peak:
-    // TODO
+    iirCoefs = IIRCoefficients::makePeakFilter(sr, freq, quality, gainFactor);
     break;
   case FilterType::HighPass:
-    iirCoefs = IIRCoefficients::makeHighPass(getSampleRate(), freq, res);
+    iirCoefs = IIRCoefficients::makeHighPass(sr, freq, quality);
     break;
   default:
     break;
@@ -139,16 +158,18 @@ FilterProcessor::IIRCoefficientsPtr FilterProcessor::getIIRCoefficients() {
 }
 
 FilterParameters FilterProcessor::extractFilterParameters(APVTS &apvts) {
-  FilterParameters params;
+  FilterParameters p;
 
-  params.filterTypeChoice = dynamic_cast<juce::AudioParameterChoice *>(
+  p.filterTypeChoice = dynamic_cast<juce::AudioParameterChoice *>(
       apvts.getParameter(FilterParameters::getFilterTypeChoiceID(id)));
-  params.isActive = dynamic_cast<juce::AudioParameterBool *>(
+  p.isActive = dynamic_cast<juce::AudioParameterBool *>(
       apvts.getParameter(FilterParameters::getIsActiveID(id)));
-  params.frequency = dynamic_cast<juce::AudioParameterFloat *>(
+  p.frequency = dynamic_cast<juce::AudioParameterFloat *>(
       apvts.getParameter(FilterParameters::getFrequencyID(id)));
-  params.passPeak = dynamic_cast<juce::AudioParameterFloat *>(
-      apvts.getParameter(FilterParameters::getPassPeakID(id)));
+  p.quality = dynamic_cast<juce::AudioParameterFloat *>(
+      apvts.getParameter(FilterParameters::getQualityID(id)));
+  p.gain = dynamic_cast<juce::AudioParameterFloat *>(
+      apvts.getParameter(FilterParameters::getGainID(id)));
 
-  return params;
+  return p;
 }

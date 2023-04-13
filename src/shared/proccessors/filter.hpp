@@ -8,9 +8,12 @@ enum class FilterType { LowPass, Peak, HighPass };
 
 struct FilterParameters {
   juce::AudioParameterChoice *filterTypeChoice;
+
   juce::AudioParameterBool *isActive;
+
   juce::AudioParameterFloat *frequency;
-  juce::AudioParameterFloat *passPeak;
+  juce::AudioParameterFloat *quality;
+  juce::AudioParameterFloat *gain;
 
   static void addToLayout(APVTS::ParameterLayout &, int);
 
@@ -26,9 +29,13 @@ struct FilterParameters {
   static juce::String getFrequencyName(int) noexcept;
   float getFrequencyValue();
 
-  static juce::String getPassPeakID(int) noexcept;
-  static juce::String getPassPeakName(int) noexcept;
-  float getPassPeakValue();
+  static juce::String getQualityID(int) noexcept;
+  static juce::String getQualityName(int) noexcept;
+  float getQualityValue();
+
+  static juce::String getGainID(int) noexcept;
+  static juce::String getGainName(int) noexcept;
+  float getGainFactorValue();
 };
 
 class FilterProcessor : public BaseProcessor {

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "filter.hpp"
+#include "equalizer.hpp"
 #include "gain.hpp"
 #include "lib/lib.hpp"
 
@@ -19,6 +19,8 @@ public:
   void setStateInformation(const void *, int) override;
 
   GainProcessor *getGainProcessor();
+  EqualizerProcessor *getEqualizerProcessor();
+
   APVTS &getAPVTS();
 
 protected:
@@ -35,5 +37,5 @@ private:
   APVTS apvts;
 
   Node::Ptr gainNode;
-  Node::Ptr filterNode;
+  Node::Ptr equalizerNode;
 };
