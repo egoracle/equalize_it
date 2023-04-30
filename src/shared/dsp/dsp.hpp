@@ -1,4 +1,4 @@
 #pragma once
 
-#include "spectrogram.hpp"
+#include "fft.hpp"
 #include "window.hpp"

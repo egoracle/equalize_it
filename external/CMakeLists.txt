@@ -27,3 +27,6 @@ set(JUCE_DEPENDENCIES
 
 # Friz
 juce_add_module(${CMAKE_CURRENT_LIST_DIR}/friz/Source/friz)
+
+# Spline
+set(SPLINE_PATH ${CMAKE_CURRENT_LIST_DIR}/spline/src)

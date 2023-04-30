@@ -157,6 +157,20 @@ FilterProcessor::IIRCoefficientsPtr FilterProcessor::getIIRCoefficients() {
   return iirCoefs;
 }
 
+std::function<float(float)> FilterProcessor::getFrequencyResponse() {
+  if (!params.getIsActiveValue()) {
+    return BaseProcessor::getFrequencyResponse();
+  }
+
+  return [this](float freq) {
+    auto iirCoefs = filter->state;
+    auto sr = getSampleRate();
+
+    float mag = iirCoefs->getMagnitudeForFrequency(freq, sr);
+    return juce::Decibels::gainToDecibels(mag);
+  };
+}
+
 FilterParameters FilterProcessor::extractFilterParameters(APVTS &apvts) {
   FilterParameters p;
 

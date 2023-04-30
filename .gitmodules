@@ -4,3 +4,6 @@
 [submodule "external/friz"]
 	path = external/friz
 	url = https://github.com/bgporter/animator
+[submodule "external/spline"]
+	path = external/spline
+	url = https://github.com/ttk592/spline.git

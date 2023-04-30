@@ -12,5 +12,6 @@ public:
   void resized() override;
 
 private:
-  Grid grid;
+  GridComponent grid;
+  AnalyzerComponent analyzer;
 };

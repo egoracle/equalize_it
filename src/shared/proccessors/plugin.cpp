@@ -18,6 +18,15 @@ int PluginProcessor::getNumPrograms() { return 1; }
 void PluginProcessor::getStateInformation(juce::MemoryBlock &) {}
 void PluginProcessor::setStateInformation(const void *, int) {}
 
+AnalyzerProcessor *PluginProcessor::getAnalyzerProcessor() {
+  if (analyzerNode) {
+    return dynamic_cast<AnalyzerProcessor *>(
+        analyzerNode.get()->getProcessor());
+  }
+
+  return nullptr;
+}
+
 GainProcessor *PluginProcessor::getGainProcessor() {
   if (gainNode) {
     return dynamic_cast<GainProcessor *>(gainNode.get()->getProcessor());
@@ -37,6 +46,7 @@ EqualizerProcessor *PluginProcessor::getEqualizerProcessor() {
 APVTS &PluginProcessor::getAPVTS() { return apvts; }
 
 void PluginProcessor::initializeEffectNodes() {
+  analyzerNode = audioGraph->addNode(std::make_unique<AnalyzerProcessor>());
   gainNode = audioGraph->addNode(std::make_unique<GainProcessor>(apvts));
   equalizerNode =
       audioGraph->addNode(std::make_unique<EqualizerProcessor>(apvts));
@@ -45,7 +55,9 @@ void PluginProcessor::initializeEffectNodes() {
 void PluginProcessor::connectAudioNodes() {
   for (int channel = 0; channel < 2; ++channel) {
     audioGraph->addConnection(
-        {{audioInputNode->nodeID, channel}, {equalizerNode->nodeID, channel}});
+        {{audioInputNode->nodeID, channel}, {analyzerNode->nodeID, channel}});
+    audioGraph->addConnection(
+        {{analyzerNode->nodeID, channel}, {equalizerNode->nodeID, channel}});
     audioGraph->addConnection(
         {{equalizerNode->nodeID, channel}, {gainNode->nodeID, channel}});
     audioGraph->addConnection(

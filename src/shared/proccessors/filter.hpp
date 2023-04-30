@@ -51,6 +51,8 @@ public:
   void prepareToPlay(double, int) override;
   void processBlock(juce::AudioSampleBuffer &, juce::MidiBuffer &) override;
 
+  std::function<float(float)> getFrequencyResponse() override;
+
 private:
   void updateFilter();
   IIRCoefficientsPtr getIIRCoefficients();

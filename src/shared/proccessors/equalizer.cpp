@@ -1,5 +1,4 @@
 #include "equalizer.hpp"
-#include "filter.hpp"
 
 // EqualizerParameters
 
@@ -7,7 +6,7 @@ void EqualizerParameters::addToLayout(APVTS::ParameterLayout &layout) {
   layout.add(std::make_unique<juce::AudioParameterBool>(
       getIsActiveID(), getIsActiveName(), true));
 
-  for (int i = 1; i <= 12; ++i) {
+  for (int i = 1; i <= EqualizerProcessor::FILTERS_COUNT; ++i) {
     FilterParameters::addToLayout(layout, i);
   }
 }
@@ -40,8 +39,16 @@ void EqualizerProcessor::processBlock(juce::AudioSampleBuffer &audioBuffer,
   }
 }
 
+FilterProcessor *EqualizerProcessor::getFilter(int filterID) {
+  jassert(filterID >= 1 && filterID <= FILTERS_COUNT);
+
+  int index = filterID - 1;
+
+  return dynamic_cast<FilterProcessor *>(filterNodes[index]->getProcessor());
+}
+
 void EqualizerProcessor::initializeEffectNodes() {
-  for (int i = 0; i < 12; ++i) {
+  for (int i = 0; i < FILTERS_COUNT; ++i) {
     filterNodes[i] = audioGraph->addNode(
         std::make_unique<FilterProcessor>(i + 1, treeState));
   }
@@ -51,13 +58,26 @@ void EqualizerProcessor::connectAudioNodes() {
   for (int channel = 0; channel < 2; ++channel) {
     audioGraph->addConnection(
         {{audioInputNode->nodeID, channel}, {filterNodes[0]->nodeID, channel}});
-    for (int i = 0; i < 11; ++i) {
+    for (int i = 0; i < FILTERS_COUNT - 1; ++i) {
       audioGraph->addConnection({{filterNodes[i]->nodeID, channel},
                                  {filterNodes[i + 1]->nodeID, channel}});
     }
-    audioGraph->addConnection({{filterNodes[11]->nodeID, channel},
-                               {audioOutputNode->nodeID, channel}});
+    audioGraph->addConnection(
+        {{filterNodes[FILTERS_COUNT - 1]->nodeID, channel},
+         {audioOutputNode->nodeID, channel}});
   }
+}
+
+std::function<float(float)> EqualizerProcessor::getFrequencyResponse() {
+  return [this](float freq) {
+    float response = getFilter(1)->getFrequencyResponse()(freq);
+
+    for (int i = 2; i <= FILTERS_COUNT; ++i) {
+      response += getFilter(i)->getFrequencyResponse()(freq);
+    }
+
+    return response;
+  };
 }
 
 EqualizerParameters

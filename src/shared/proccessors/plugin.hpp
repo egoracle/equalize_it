@@ -1,5 +1,6 @@
 #pragma once
 
+#include "analyzer.hpp"
 #include "equalizer.hpp"
 #include "gain.hpp"
 #include "lib/lib.hpp"
@@ -18,6 +19,7 @@ public:
   void getStateInformation(juce::MemoryBlock &) override;
   void setStateInformation(const void *, int) override;
 
+  AnalyzerProcessor *getAnalyzerProcessor();
   GainProcessor *getGainProcessor();
   EqualizerProcessor *getEqualizerProcessor();
 
@@ -36,6 +38,7 @@ private:
 
   APVTS apvts;
 
+  Node::Ptr analyzerNode;
   Node::Ptr gainNode;
   Node::Ptr equalizerNode;
 };

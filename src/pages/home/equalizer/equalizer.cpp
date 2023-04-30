@@ -1,7 +1,9 @@
 #include "equalizer.hpp"
 
-Equalizer::Equalizer(PluginProcessor &pluginProcessor) {
+Equalizer::Equalizer(PluginProcessor &pluginProcessor)
+    : analyzer(pluginProcessor) {
   addAndMakeVisible(grid);
+  addAndMakeVisible(analyzer);
 
   resized();
 }
@@ -16,4 +18,6 @@ void Equalizer::resized() {
   layout.items = {juce::GridItem(grid)};
 
   LayoutComponent::resized();
+
+  analyzer.setBounds(getLocalBounds());
 }

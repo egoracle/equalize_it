@@ -2,6 +2,8 @@
 
 #include <juce_audio_processors/juce_audio_processors.h>
 
+#include <functional>
+
 using APVTS = juce::AudioProcessorValueTreeState;
 
 class BaseProcessor : public juce::AudioProcessor {
@@ -52,6 +54,9 @@ public:
   virtual void getStateInformation(juce::MemoryBlock &) {}
   virtual void setStateInformation(const void *, int) {}
 
-protected:
+  virtual std::function<float(float)> getFrequencyResponse() {
+    return [](float) { return juce::Decibels::gainToDecibels(1.0f); };
+  }
+
   JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(BaseProcessor)
 };
