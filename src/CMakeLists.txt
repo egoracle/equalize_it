@@ -41,4 +41,4 @@ target_include_directories(
   ${PROJECT_NAME}
   PUBLIC ${CMAKE_CURRENT_LIST_DIR}/app ${CMAKE_CURRENT_LIST_DIR}/shared
          ${CMAKE_CURRENT_LIST_DIR}/widgets ${CMAKE_CURRENT_LIST_DIR}/pages
-         ${CMAKE_CURRENT_LIST_DIR}/../external/spline/src)
+         ${SPLINE_PATH})
