@@ -28,7 +28,7 @@ void AnalyzerComponent::paint(juce::Graphics &g) {
   auto dBToY = math::segmentMapping(-100.0f, 10.f, -h, 0.0f);
 
   juce::Path preSpectrumPath;
-  for (int i = 1; i <= w; ++i) {
+  for (int i = 1; i <= int(w); ++i) {
     float x = float(i);
     float freq = xToFreq(x);
 
@@ -93,7 +93,7 @@ std::function<float(float)> AnalyzerComponent::calculatePreSpectrum() {
   float h = float(getHeight()) - 1;
 
   float sr = float(analyzerProcessor->getSampleRate());
-  int fftSize = AnalyzerProcessor::FFT_SIZE;
+  int fftSize = analyzerProcessor->getFFTSize();
   auto amplitudes = analyzerProcessor->getAmplitudes();
 
   auto binToFreq = dsp::binToFrequencyMapping(fftSize, sr);

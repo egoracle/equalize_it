@@ -1,23 +1,15 @@
-#define _USE_MATH_DEFINES
 
 #include "analyzer.hpp"
+#include "../constants/constants.hpp"
 #include "../math/math.hpp"
 
-#include <spline.h>
-
-AnalyzerProcessor::AnalyzerProcessor()
-    : audioBlock(FFT_SIZE), window(dsp::nuttallWindow(FFT_SIZE)),
-      amplitudes(FFT_SIZE / 2) {
-  for (auto &amplitude : amplitudes) {
-    amplitude.setCurrentAndTargetValue(juce::Decibels::gainToDecibels(0.0f));
-  }
-}
+AnalyzerProcessor::AnalyzerProcessor() { update(); }
 
 void AnalyzerProcessor::prepareToPlay(double sampleRate, int samplesPerBlock) {
   BaseProcessor::prepareToPlay(sampleRate, samplesPerBlock);
 
   for (auto &amplitude : amplitudes) {
-    amplitude.reset(sampleRate, 0.3);
+    amplitude.reset(sampleRate, rampLengthAmplitudes);
   }
 }
 
@@ -41,19 +33,68 @@ void AnalyzerProcessor::processBlock(juce::AudioSampleBuffer &audioBuffer,
   }
 }
 
-void AnalyzerProcessor::pushNextSampleToAudioBlock(float sample) {
-  if (audioBlockIndex == FFT_SIZE) {
-    nextBlockReady = true;
+void AnalyzerProcessor::changeFFTOrder(int newOrder) {
+  jassert(newOrder >= 10 && newOrder <= 13);
 
-    for (auto i = 0; i < FFT_SIZE - HOP_SIZE; ++i) {
-      audioBlock[i] = audioBlock[HOP_SIZE + i - 1];
-    }
+  fftOrder = newOrder;
+  fftSize = 1 << newOrder;
 
-    audioBlockIndex = FFT_SIZE - HOP_SIZE;
+  update();
+}
+
+void AnalyzerProcessor::changeWindowKind(dsp::WindowKind kind) {
+  windowKind = kind;
+
+  update();
+}
+
+void AnalyzerProcessor::update() {
+  audioBlock.resize(fftSize);
+  audioBlockIndex = 0;
+  nextBlockReady = false;
+
+  phasors.resize(fftSize * 2);
+  if (window == nullptr || window->getKind() != windowKind) {
+    window =
+        std::unique_ptr<dsp::Window>(dsp::Window::createWindow(windowKind));
+  }
+  window->updateCoefficients(fftSize);
+
+  amplitudes.resize(fftSize);
+  for (auto &amplitude : amplitudes) {
+    amplitude.setCurrentAndTargetValue(constants::MINUS_INFINITY_DB);
   }
 
-  audioBlock[audioBlockIndex] = std::complex(sample, 0.0f);
+  double sampleRate = getSampleRate();
+
+  if (sampleRate != 0) {
+    for (auto &amplitude : amplitudes) {
+      amplitude.reset(sampleRate, rampLengthAmplitudes);
+    }
+  }
+}
+
+void AnalyzerProcessor::pushNextSampleToAudioBlock(float sample) {
+  if (audioBlockIndex == fftSize) {
+    if (!nextBlockReady) {
+      moveAudioBlockSamples();
+      nextBlockReady = true;
+    }
+
+    audioBlockIndex = 0;
+  }
+
+  audioBlock[audioBlockIndex] = sample;
   audioBlockIndex++;
+}
+
+void AnalyzerProcessor::moveAudioBlockSamples() {
+  for (int i = 0; i < audioBlock.size(); ++i) {
+    phasors[i] = std::complex<float>(audioBlock[i], 0.0f);
+  }
+  for (int i = audioBlock.size(); i < phasors.size(); ++i) {
+    phasors[i] = std::complex<float>(0.0f, 0.0f);
+  }
 }
 
 void AnalyzerProcessor::updateAmplitudes() {
@@ -61,14 +102,14 @@ void AnalyzerProcessor::updateAmplitudes() {
     return;
   }
 
-  auto phasors = window * audioBlock;
+  phasors = window->getCoefficients() * phasors;
   dsp::fft(phasors);
 
-  phasors = math::octaveSmoothing(12, phasors);
+  phasors = math::octaveSmoothing(24, phasors);
 
-  for (int i = 0; i < FFT_SIZE / 2; ++i) {
+  for (int i = 0; i < amplitudes.size(); ++i) {
     float amplitude =
-        juce::Decibels::gainToDecibels(std::abs(phasors[i]) / FFT_SIZE);
+        juce::Decibels::gainToDecibels(std::abs(phasors[i]) / fftSize);
 
     if (amplitude < amplitudes[i].getCurrentValue()) {
       amplitudes[i].setTargetValue(amplitude);
@@ -78,9 +119,4 @@ void AnalyzerProcessor::updateAmplitudes() {
   }
 
   nextBlockReady = false;
-}
-
-std::valarray<juce::LinearSmoothedValue<float>> &
-AnalyzerProcessor::getAmplitudes() {
-  return amplitudes;
 }

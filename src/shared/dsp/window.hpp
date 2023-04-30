@@ -5,8 +5,27 @@
 
 namespace dsp {
 
-std::valarray<std::complex<float>> hannWindow(int);
-std::valarray<std::complex<float>> hammingWindow(int);
-std::valarray<std::complex<float>> nuttallWindow(int);
+enum class WindowKind { Hann, Hamming, Nuttall };
+
+class Window {
+public:
+  void updateCoefficients(int width) {
+    coefficients.resize(width);
+    calculateCoefficients(width);
+  }
+
+  const std::valarray<std::complex<float>> &getCoefficients() const noexcept {
+    return coefficients;
+  }
+
+  virtual WindowKind getKind() const = 0;
+
+  static Window *createWindow(WindowKind);
+
+protected:
+  virtual void calculateCoefficients(int) = 0;
+
+  std::valarray<std::complex<float>> coefficients;
+};
 
 } // namespace dsp
