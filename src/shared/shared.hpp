@@ -1,9 +1,7 @@
 #pragma once
 
-#include "core/core.hpp"
-
-#include "lib/base_component.hpp"
-#include "lib/base_processor.hpp"
-
-#include "ui/colours.hpp"
-#include "ui/fonts.hpp"
+#include "constants/constants.hpp"
+#include "dsp/dsp.hpp"
+#include "math/math.hpp"
+#include "proccessors/processors.hpp"
+#include "ui/ui.hpp"

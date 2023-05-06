@@ -8,8 +8,10 @@ juce_add_plugin(
   P001
   FORMATS
   ${FORMATS}
+  COMPANY_NAME
+  ${COMPANY_NAME}
   PRODUCT_NAME
-  ${PROJECT_NAME})
+  ${PRODUCT_NAME})
 
 target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_20)
 
@@ -31,11 +33,12 @@ target_compile_definitions(
 
 target_link_libraries(
   ${PROJECT_NAME}
-  PRIVATE ${JUCE_DEPENDENCIES} public_binaries
+  PRIVATE ${JUCE_DEPENDENCIES} public_binaries friz
   PUBLIC juce::juce_recommended_config_flags juce::juce_recommended_lto_flags
          juce::juce_recommended_warning_flags)
 
 target_include_directories(
   ${PROJECT_NAME}
   PUBLIC ${CMAKE_CURRENT_LIST_DIR}/app ${CMAKE_CURRENT_LIST_DIR}/shared
-         ${CMAKE_CURRENT_LIST_DIR}/widgets)
+         ${CMAKE_CURRENT_LIST_DIR}/widgets ${CMAKE_CURRENT_LIST_DIR}/pages
+         ${SPLINE_PATH})

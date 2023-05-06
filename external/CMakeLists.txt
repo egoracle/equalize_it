@@ -1,3 +1,4 @@
+# JUCE
 add_subdirectory(juce)
 
 set(FORMATS
@@ -23,3 +24,9 @@ set(JUCE_DEPENDENCIES
     juce::juce_events
     juce::juce_gui_extra
     PARENT_SCOPE)
+
+# Friz
+juce_add_module(${CMAKE_CURRENT_LIST_DIR}/friz/Source/friz)
+
+# Spline
+set(SPLINE_PATH ${CMAKE_CURRENT_LIST_DIR}/spline/src PARENT_SCOPE)

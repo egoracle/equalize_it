@@ -1,7 +1,10 @@
-#include "app/processor.hpp"
-
-#include <juce_audio_processors/juce_audio_processors.h>
+#include "app.hpp"
 
 juce::AudioProcessor *JUCE_CALLTYPE createPluginFilter() {
-  return new app::AppProcessor();
+  std::function<juce::AudioProcessorEditor *(PluginProcessor *)>
+      createEditorCallback = [](PluginProcessor *processor) {
+        return new PluginEditor(*processor);
+      };
+
+  return new PluginProcessor(createEditorCallback);
 }

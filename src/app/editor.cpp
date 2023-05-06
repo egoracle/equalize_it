@@ -1,32 +1,23 @@
 #include "editor.hpp"
 
-app::AppEditor::AppEditor(AppProcessor &audioProcessor)
-    : juce::AudioProcessorEditor(&audioProcessor),
-      audioProcessor(audioProcessor),
-      analyzerEditor(audioProcessor.getAnalyzerProcessor()) {
-  juce::LookAndFeel::setDefaultLookAndFeel(&fontLookAndFeel);
-
+PluginEditor::PluginEditor(PluginProcessor &p)
+    : juce::AudioProcessorEditor(&p), homePage(p) {
+  setSize(defaultWidth, defaultHeight);
   setResizable(true, true);
-  setSize(1280, 720);
 
-  addAndMakeVisible(header);
-  addAndMakeVisible(analyzerEditor);
+  const auto desktopArea =
+      juce::Desktop::getInstance().getDisplays().getPrimaryDisplay()->userArea;
 
-  grid.templateRows = {Track(Px(header.minHeight)), Track(Px(30)), Track(Fr(1)),
-                       Track(Px(header.minHeight))};
-  grid.templateColumns = {Track(Fr(1))};
-  grid.items = {juce::GridItem(header), juce::GridItem(),
-                juce::GridItem(analyzerEditor), juce::GridItem()};
+  setResizeLimits(minWidth, minHeight, desktopArea.getWidth(),
+                  desktopArea.getHeight());
+
+  addAndMakeVisible(homePage);
 
   resized();
 }
 
-app::AppEditor::~AppEditor() {
-  juce::LookAndFeel::setDefaultLookAndFeel(nullptr);
-}
+PluginEditor::~PluginEditor() {}
 
-void app::AppEditor::paint(juce::Graphics &g) {
-  g.fillAll(juce::Colours::white);
-}
+void PluginEditor::paint(juce::Graphics &) {}
 
-void app::AppEditor::resized() { grid.performLayout(getLocalBounds()); }
+void PluginEditor::resized() { homePage.setBounds(getLocalBounds()); }
