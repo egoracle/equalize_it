@@ -22,14 +22,14 @@ public:
 
   float getRmsValue(int);
 
-  void updateRmsValues(juce::AudioSampleBuffer &);
-  void applyGain(juce::AudioSampleBuffer &);
-
 private:
   GainParameters extractGainParameters(APVTS &);
 
+  void updateRmsValue(juce::AudioSampleBuffer &, int);
+  void applyGain(juce::AudioSampleBuffer &);
+
   GainParameters params;
   float previousWetValueDb;
-  float rmsValueLeft;
-  float rmsValueRight;
+
+  juce::LinearSmoothedValue<float> rmsValueLeft, rmsValueRight;
 };

@@ -1,5 +1,7 @@
 #include "gain.hpp"
 
+#include "../constants/constants.hpp"
+
 // GainParameters
 
 void GainParameters::addToLayout(APVTS::ParameterLayout &layout) {
@@ -22,31 +24,48 @@ float GainParameters::getWetDbValue() {
 GainProcessor::GainProcessor(APVTS &apvts)
     : params(extractGainParameters(apvts)) {}
 
-void GainProcessor::prepareToPlay(double, int) {
+void GainProcessor::prepareToPlay(double sampleRate, int) {
   previousWetValueDb = params.getWetDbValue();
+
+  rmsValueLeft.reset(sampleRate, 0.5);
+  rmsValueRight.reset(sampleRate, 0.5);
+
+  rmsValueLeft.setCurrentAndTargetValue(constants::MINUS_INFINITY_DB);
+  rmsValueLeft.setCurrentAndTargetValue(constants::MINUS_INFINITY_DB);
 }
 
 void GainProcessor::processBlock(juce::AudioSampleBuffer &audioBuffer,
                                  juce::MidiBuffer &) {
   applyGain(audioBuffer);
-  updateRmsValues(audioBuffer);
+  updateRmsValue(audioBuffer, 0);
+  updateRmsValue(audioBuffer, 1);
 }
 
 float GainProcessor::getRmsValue(int channel) {
   jassert(channel == 0 || channel == 1);
 
   if (channel == 0) {
-    return rmsValueLeft;
+    return rmsValueLeft.getCurrentValue();
   }
 
-  return rmsValueRight;
+  return rmsValueRight.getCurrentValue();
 }
 
-void GainProcessor::updateRmsValues(juce::AudioSampleBuffer &audioBuffer) {
-  rmsValueLeft = juce::Decibels::gainToDecibels(
-      audioBuffer.getRMSLevel(0, 0, audioBuffer.getNumSamples()));
-  rmsValueRight = juce::Decibels::gainToDecibels(
-      audioBuffer.getRMSLevel(1, 0, audioBuffer.getNumSamples()));
+void GainProcessor::updateRmsValue(juce::AudioSampleBuffer &audioBuffer,
+                                   int channel) {
+  jassert(channel == 0 || channel == 1);
+
+  auto &rmsValue = channel == 0 ? rmsValueLeft : rmsValueRight;
+
+  rmsValue.skip(audioBuffer.getNumSamples());
+
+  const auto value = juce::Decibels::gainToDecibels(
+      audioBuffer.getRMSLevel(channel, 0, audioBuffer.getNumSamples()));
+  if (value < rmsValue.getCurrentValue()) {
+    rmsValue.setTargetValue(value);
+  } else {
+    rmsValue.setCurrentAndTargetValue(value);
+  }
 }
 
 void GainProcessor::applyGain(juce::AudioSampleBuffer &audioBuffer) {
@@ -62,9 +81,9 @@ void GainProcessor::applyGain(juce::AudioSampleBuffer &audioBuffer) {
 }
 
 GainParameters GainProcessor::extractGainParameters(APVTS &apvts) {
-  GainParameters params;
-  params.wet = dynamic_cast<juce::AudioParameterFloat *>(
+  GainParameters p;
+  p.wet = dynamic_cast<juce::AudioParameterFloat *>(
       apvts.getParameter(GainParameters::getWetID()));
 
-  return params;
+  return p;
 }
