@@ -7,7 +7,8 @@
 class BarComponent : public juce::Component, private juce::Timer {
 public:
   BarComponent(PluginProcessor &pluginProcessor, int channel)
-      : pluginProcessor(pluginProcessor), channel(channel) {
+      : pluginProcessor(pluginProcessor), channel(channel),
+        level(constants::MINUS_INFINITY_DB) {
     startTimerHz(30);
   }
 
@@ -19,5 +20,5 @@ private:
   PluginProcessor &pluginProcessor;
   int channel;
 
-  float level = -70.0f;
+  float level;
 };

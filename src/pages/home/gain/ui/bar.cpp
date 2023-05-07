@@ -1,14 +1,17 @@
 #include "bar.hpp"
 
+#include "constants.hpp"
+
 void BarComponent::paint(juce::Graphics &g) {
   auto bounds = getLocalBounds().toFloat();
 
-  g.setColour(juce::Colours::black);
-  g.fillRoundedRectangle(bounds, 5.0f);
+  auto dBMap = math::segmentMapping(
+      constants::GAIN_MIN_DB, constants::GAIN_MAX_DB, 0.0f, float(getHeight()));
+  const auto scaledY = dBMap(level);
 
-  g.setColour(juce::Colour(0xff2683ee));
-  const auto scaledY =
-      juce::jmap(level, -70.0f, 6.0f, 0.0f, static_cast<float>(getHeight()));
+  g.setGradientFill(juce::ColourGradient(
+      juce::Colour(0xff87bfff), bounds.getBottomLeft(),
+      juce::Colour(0xff2683ee), bounds.getTopLeft(), false));
   g.fillRoundedRectangle(bounds.removeFromBottom(scaledY), 5.0f);
 }
 
