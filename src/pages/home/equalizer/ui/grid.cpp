@@ -1,9 +1,11 @@
 #include "grid.hpp"
 
-GridComponent::GridComponent() {}
-
 void GridComponent::paint(juce::Graphics &g) {
   g.setColour(juce::Colours::black);
+  g.setFont(juce::Font(getFontSize(getWidth())));
+
+  const float circleWidth = 5.0f;
+  const float halfCircleWidth = circleWidth * 0.5f;
 
   float w = float(getWidth()) - 1;
   float h = float(getHeight()) - 1;
@@ -16,12 +18,15 @@ void GridComponent::paint(juce::Graphics &g) {
   for (const auto &[freq, label] : labelFrequencies) {
     float x = freqMap(freq);
 
+    g.setColour(juce::Colour(0xffe0e0e0));
     for (int dB = minDb + dBStep; dB < maxDb; dB += dBStep) {
       float y = -dBMap(float(dB));
 
-      g.drawEllipse(x - 5, y - 5, 10.0f, 10.0f, 3);
+      g.fillEllipse(x - halfCircleWidth, y - halfCircleWidth, circleWidth,
+                    circleWidth);
     }
 
+    g.setColour(juce::Colours::black);
     g.drawText(label, int(x - labelWidth * 0.5f), int(h - labelWidth),
                int(labelWidth), int(labelWidth), juce::Justification::centred);
   }

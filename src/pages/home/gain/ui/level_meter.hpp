@@ -2,20 +2,17 @@
 
 #include "shared.hpp"
 
-#include <juce_audio_utils/juce_audio_utils.h>
+#include "bar.hpp"
+#include "scale.hpp"
 
-class LevelMeter : public juce::Component, private juce::Timer {
+class LevelMeterComponent : public LayoutComponent {
 public:
-  LevelMeter(int, PluginProcessor &);
+  LevelMeterComponent(PluginProcessor &);
 
-  void paint(juce::Graphics &) override;
-
-  void timerCallback() override;
+  void resized() override;
 
 private:
-  int channel;
-
-  PluginProcessor &pluginProcessor;
-
-  float level;
+  BarComponent leftBar;
+  ScaleComponent scale;
+  BarComponent rightBar;
 };

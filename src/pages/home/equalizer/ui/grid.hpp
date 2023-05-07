@@ -6,16 +6,28 @@
 
 class GridComponent : public LayoutComponent {
 public:
-  GridComponent();
+  GridComponent()
+      : fontLinInterpCoef((maxFontSize - minFontSize) / (maxWidth - minWidth)) {
+  }
 
   void paint(juce::Graphics &) override;
 
 private:
+  float getFontSize(float width) {
+    return minFontSize + fontLinInterpCoef * (width - minWidth);
+  }
+
+  const float minFontSize = 14.0f;
+  const float maxFontSize = 20.0f;
+  const float minWidth = 720.0f;
+  const float maxWidth = 1920.0f;
+  float fontLinInterpCoef;
+
   const int minFreq = 5;
   const int maxFreq = 50000;
 
   const int minDb = -15;
-  const int maxDb = 15;
+  const int maxDb = 13;
   const int dBStep = 3;
 
   const std::map<float, juce::String> labelFrequencies{

@@ -1,28 +1,19 @@
 #include "level_meter.hpp"
 
-LevelMeter::LevelMeter(int ch, PluginProcessor &p)
-    : channel(ch), pluginProcessor(p), level(-70.0f) {
-  startTimerHz(30);
+LevelMeterComponent::LevelMeterComponent(PluginProcessor &pluginProcessor)
+    : leftBar(pluginProcessor, 0), rightBar(pluginProcessor, 0) {
+  addAndMakeVisible(leftBar);
+  addAndMakeVisible(scale);
+  addAndMakeVisible(rightBar);
+
+  resized();
 }
 
-void LevelMeter::paint(juce::Graphics &g) {
-  auto bounds = getLocalBounds().toFloat();
+void LevelMeterComponent::resized() {
+  layout.templateRows = {Track(Fr(1))};
+  layout.templateColumns = {Track(Px(10)), Track(Fr(1)), Track(Px(10))};
+  layout.items = {juce::GridItem(leftBar), juce::GridItem(scale),
+                  juce::GridItem(rightBar)};
 
-  g.setColour(juce::Colours::grey.withBrightness(0.4f));
-  g.fillRoundedRectangle(bounds, 5.0f);
-
-  g.setColour(juce::Colours::blue);
-  const auto scaledY =
-      juce::jmap(level, -70.0f, 6.0f, 0.0f, static_cast<float>(getHeight()));
-  g.fillRoundedRectangle(bounds.removeFromBottom(scaledY), 5.0f);
-}
-
-void LevelMeter::timerCallback() {
-  auto gainProcessor = pluginProcessor.getGainProcessor();
-
-  if (gainProcessor) {
-    level = gainProcessor->getRmsValue(channel);
-  }
-
-  repaint();
+  LayoutComponent::resized();
 }

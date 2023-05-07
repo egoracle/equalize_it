@@ -11,13 +11,15 @@ PluginEditor::PluginEditor(PluginProcessor &p)
   setResizeLimits(minWidth, minHeight, desktopArea.getWidth(),
                   desktopArea.getHeight());
 
+  juce::LookAndFeel::setDefaultLookAndFeel(&lookAndFeel);
+
   addAndMakeVisible(homePage);
 
   resized();
 }
 
-PluginEditor::~PluginEditor() {}
-
-void PluginEditor::paint(juce::Graphics &) {}
+PluginEditor::~PluginEditor() {
+  juce::LookAndFeel::setDefaultLookAndFeel(nullptr);
+}
 
 void PluginEditor::resized() { homePage.setBounds(getLocalBounds()); }

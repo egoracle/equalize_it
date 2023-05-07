@@ -7,7 +7,7 @@
 class Header : public LayoutComponent {
 public:
   static inline const float containerWidth = 1200.0f;
-  static inline const float logoWidth = 125.0f;
+  static inline const float logoWidth = 140.0f;
 
 public:
   Header();

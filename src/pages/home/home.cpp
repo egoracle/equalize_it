@@ -7,7 +7,7 @@ HomePage::HomePage(PluginProcessor &pluginProcessor) : body(pluginProcessor) {
   resized();
 }
 
-void HomePage::paint(juce::Graphics &g) { g.fillAll(juce::Colour(0xfffafcfc)); }
+void HomePage::paint(juce::Graphics &g) { g.fillAll(juce::Colours::white); }
 
 void HomePage::resized() {
   layout.templateRows = {Track(Px(headerHeight)), Track(Fr(1))};
@@ -27,7 +27,7 @@ HomePage::Body::Body(PluginProcessor &pluginProcessor)
 
 void HomePage::Body::resized() {
   layout.templateRows = {Track(Fr(1))};
-  layout.templateColumns = {Track(Px(15)), Track(Fr(1)), Track(Px(75)),
+  layout.templateColumns = {Track(Px(15)), Track(Fr(1)), Track(Px(55)),
                             Track(Px(15))};
   layout.items = {juce::GridItem(), juce::GridItem(equalizer),
                   juce::GridItem(gain), juce::GridItem()};

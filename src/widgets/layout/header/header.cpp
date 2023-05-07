@@ -4,43 +4,43 @@
 
 Header::Header() : LayoutComponent() {
   addAndMakeVisible(logo);
-  addAndMakeVisible(rightButtonsStack);
+  // addAndMakeVisible(rightButtonsStack);
 
   resized();
 }
 
 void Header::paint(juce::Graphics &g) {
-  float width = float(getWidth());
-  float centerX = width / 2;
+  // float width = float(getWidth());
+  // float centerX = width / 2;
 
-  float quarterLogoWidth = logoWidth / 4;
+  // float quarterLogoWidth = logoWidth / 4;
 
-  float height = float(getHeight()) - 1;
-  float bodyHeight = height * 0.75f;
+  // float height = float(getHeight()) - 1;
+  // float bodyHeight = height * 0.75f;
 
-  juce::Path p;
+  // juce::Path p;
 
-  // Painting separator
-  p.startNewSubPath(0.0f, bodyHeight);
-  p.lineTo(centerX - logoWidth, bodyHeight);
-  p.lineTo(centerX - quarterLogoWidth, height);
-  p.lineTo(centerX + quarterLogoWidth, height);
-  p.lineTo(centerX + logoWidth, bodyHeight);
-  p.lineTo(width, bodyHeight);
+  // // Painting separator
+  // p.startNewSubPath(0.0f, bodyHeight);
+  // p.lineTo(centerX - logoWidth, bodyHeight);
+  // p.lineTo(centerX - quarterLogoWidth, height);
+  // p.lineTo(centerX + quarterLogoWidth, height);
+  // p.lineTo(centerX + logoWidth, bodyHeight);
+  // p.lineTo(width, bodyHeight);
 
-  g.setColour(juce::Colour(0x60344661));
-  g.strokePath(p, juce::PathStrokeType(1));
+  // g.setColour(juce::Colour(0x60344661));
+  // g.strokePath(p, juce::PathStrokeType(1));
 
-  // Painting background
-  p.lineTo(width, 0.0f);
-  p.lineTo(0.0f, 0.0f);
-  p.lineTo(0.0f, bodyHeight);
+  // // Painting background
+  // p.lineTo(width, 0.0f);
+  // p.lineTo(0.0f, 0.0f);
+  // p.lineTo(0.0f, bodyHeight);
 
-  juce::FillType fill;
-  fill.setColour(juce::Colours::white);
+  // juce::FillType fill;
+  // fill.setColour(juce::Colours::white);
 
-  g.setFillType(juce::FillType(juce::Colours::white));
-  g.fillPath(p);
+  // g.setFillType(juce::FillType(juce::Colours::white));
+  // g.fillPath(p);
 }
 
 void Header::resized() {
