@@ -1,6 +1,7 @@
 #define _USE_MATH_DEFINES
 
 #include "analyzer.hpp"
+#include "constants.hpp"
 
 #include <spline.h>
 #include <vector>
@@ -10,70 +11,101 @@ AnalyzerComponent::AnalyzerComponent(PluginProcessor &p) : pluginProcessor(p) {
 }
 
 void AnalyzerComponent::paint(juce::Graphics &g) {
+  auto equalizerProcessor = pluginProcessor.getEqualizerProcessor();
   auto analyzerProcessor = pluginProcessor.getAnalyzerProcessor();
 
-  if (!analyzerProcessor) {
+  if (!equalizerProcessor || !analyzerProcessor) {
     return;
   }
 
-  float sr = float(analyzerProcessor->getSampleRate());
+  const float xMin = 0.0f;
+  const float xMax = static_cast<float>(getWidth());
+  const float yMin = 0.0f;
+  const float yMax = static_cast<float>(getHeight());
 
-  auto preSpectrum = calculatePreSpectrum();
-  auto postSpectrum = calculatePostSpectrum(preSpectrum);
+  const float sampleRate =
+      static_cast<float>(analyzerProcessor->getSampleRate());
+  const float halfSampleRate = sampleRate * 0.5f;
+  const int fftSize = analyzerProcessor->getFFTSize();
 
-  float w = float(getWidth()) - 1;
-  float h = float(getHeight()) - 1;
+  const auto xToFreq = math::invLogMapping(xMin, xMax, constants::GRID_MIN_FREQ,
+                                           constants::GRID_MAX_FREQ);
+  const auto dBToY = math::segmentMapping(
+      constants::MINUS_INFINITY_DB, constants::ANALYZER_MAX_DB, yMax, 0.0f);
 
-  auto xToFreq = math::invLogMapping(0.0f, w, 5.0f, 50000.0f);
-  auto dBToY = math::segmentMapping(-100.0f, 10.f, -h, 0.0f);
+  std::function<float(float)> preSpectrum, postSpectrum;
+  {
+    const auto amplitudes = analyzerProcessor->getAmplitudes();
+    const auto binToFreq = dsp::binToFrequencyMapping(fftSize, sampleRate);
 
-  juce::Path preSpectrumPath;
-  for (int i = 1; i <= int(w); ++i) {
-    float x = float(i);
-    float freq = xToFreq(x);
-
-    if (freq > sr / 2) {
-      break;
+    std::vector<double> freqs, dBs;
+    for (std::size_t i = 1; i < amplitudes.size(); ++i) {
+      const float freq = binToFreq(static_cast<int>(i));
+      freqs.push_back(freq);
+      dBs.push_back(amplitudes[i].getCurrentValue());
     }
 
-    float y = -dBToY(preSpectrum(freq));
+    tk::spline preSpectrumSpline(freqs, dBs);
+    preSpectrum = [preSpectrumSpline](float freq) {
+      return preSpectrumSpline(freq);
+    };
 
-    if (i == 1) {
-      preSpectrumPath.startNewSubPath(x, y);
-    } else {
-      preSpectrumPath.lineTo(x, y);
-    }
+    const auto freqResponse = equalizerProcessor->getFrequencyResponse();
+    postSpectrum = [freqResponse, &preSpectrum](float freq) {
+      float preDB = preSpectrum(freq);
+      if (preDB <= constants::MINUS_INFINITY_DB) {
+        return preDB;
+      }
+      return preDB + freqResponse(freq);
+    };
   }
 
-  g.setColour(juce::Colours::green);
-  g.strokePath(
-      preSpectrumPath,
-      juce::PathStrokeType(2.f, juce::PathStrokeType::JointStyle::curved,
-                           juce::PathStrokeType::EndCapStyle::rounded));
+  const auto spectrumToXY = [&](std::function<float(float)> &spectrum) {
+    return [&](float x) {
+      const float freq = xToFreq(x);
+      return freq > halfSampleRate ? yMax : dBToY(spectrum(freq));
+    };
+  };
 
-  juce::Path postSpectrumPath;
-  for (int i = 1; i <= w; ++i) {
-    float x = float(i);
-    float freq = xToFreq(x);
+  {
+    const auto preSpectrumXY = spectrumToXY(preSpectrum);
 
-    if (freq > sr / 2) {
-      break;
+    juce::Path preSpectrumPath;
+    preSpectrumPath.preallocateSpace(3 * (static_cast<int>(xMax) + 3));
+
+    preSpectrumPath.startNewSubPath(xMin, preSpectrumXY(xMin));
+    for (float x = xMin + 1.0f; x < xMax; ++x) {
+      preSpectrumPath.lineTo(x, preSpectrumXY(x));
     }
+    preSpectrumPath.lineTo(xMax, yMax);
+    preSpectrumPath.lineTo(xMin, yMax);
+    preSpectrumPath.closeSubPath();
 
-    float y = -dBToY(postSpectrum(freq));
+    juce::ColourGradient gradient(
+        juce::Colours::transparentWhite, juce::Point(0.0f, yMax),
+        juce::Colour(0xff87bfff), juce::Point(0.0f, yMin), false);
 
-    if (i == 1) {
-      postSpectrumPath.startNewSubPath(x, y);
-    } else {
-      postSpectrumPath.lineTo(x, y);
-    }
+    g.setGradientFill(gradient);
+    g.fillPath(preSpectrumPath);
   }
 
-  g.setColour(juce::Colours::red);
-  g.strokePath(
-      postSpectrumPath,
-      juce::PathStrokeType(2.f, juce::PathStrokeType::JointStyle::curved,
-                           juce::PathStrokeType::EndCapStyle::rounded));
+  {
+    const auto postSpectrumXY = spectrumToXY(postSpectrum);
+
+    juce::Path postSpectrumPath;
+    postSpectrumPath.preallocateSpace(3 * static_cast<int>(xMax));
+
+    postSpectrumPath.startNewSubPath(xMin, postSpectrumXY(xMin));
+    for (float x = xMin + 1.0f; x < xMax; ++x) {
+      postSpectrumPath.lineTo(x, postSpectrumXY(x));
+    }
+
+    g.setColour(juce::Colour(0xff87bfff));
+    g.strokePath(
+        postSpectrumPath,
+        juce::PathStrokeType(2.f, juce::PathStrokeType::JointStyle::curved,
+                             juce::PathStrokeType::EndCapStyle::rounded));
+  }
 }
 
 void AnalyzerComponent::timerCallback() {
@@ -83,46 +115,4 @@ void AnalyzerComponent::timerCallback() {
   }
 
   repaint();
-}
-
-std::function<float(float)> AnalyzerComponent::calculatePreSpectrum() {
-  auto analyzerProcessor = pluginProcessor.getAnalyzerProcessor();
-  jassert(analyzerProcessor);
-
-  float w = float(getWidth()) - 1;
-  float h = float(getHeight()) - 1;
-
-  float sr = float(analyzerProcessor->getSampleRate());
-  int fftSize = analyzerProcessor->getFFTSize();
-  auto amplitudes = analyzerProcessor->getAmplitudes();
-
-  auto binToFreq = dsp::binToFrequencyMapping(fftSize, sr);
-  auto dBToY = math::segmentMapping(-100.0f, 10.0f, -h, 0.0f);
-
-  std::vector<double> freqs, dBs;
-  for (int i = 1; i < amplitudes.size(); ++i) {
-    float freq = binToFreq(i);
-
-    freqs.push_back(freq);
-    dBs.push_back(amplitudes[i].getCurrentValue());
-  }
-  tk::spline cubicSpline(freqs, dBs);
-
-  return [=](float freq) { return cubicSpline(freq); };
-}
-
-std::function<float(float)> AnalyzerComponent::calculatePostSpectrum(
-    std::function<float(float)> &preSpectrum) {
-  auto equalizerProcessor = pluginProcessor.getEqualizerProcessor();
-  jassert(equalizerProcessor);
-
-  auto freqResponse = equalizerProcessor->getFrequencyResponse();
-
-  return [=](float freq) {
-    float preDB = preSpectrum(freq);
-    if (preDB <= -100.0f) {
-      return preDB;
-    }
-    return preDB + freqResponse(freq);
-  };
 }

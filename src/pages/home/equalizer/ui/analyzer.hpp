@@ -14,9 +14,5 @@ public:
   void timerCallback() override;
 
 private:
-  std::function<float(float)> calculatePreSpectrum();
-  std::function<float(float)>
-  calculatePostSpectrum(std::function<float(float)> &);
-
   PluginProcessor &pluginProcessor;
 };
