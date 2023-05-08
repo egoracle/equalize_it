@@ -8,10 +8,10 @@ class Equalizer : public LayoutComponent {
 public:
   Equalizer(PluginProcessor &);
 
-  void paint(juce::Graphics &) override;
   void resized() override;
 
 private:
   GridComponent grid;
   AnalyzerComponent analyzer;
+  FrequencyResponseComponent freqResponse;
 };

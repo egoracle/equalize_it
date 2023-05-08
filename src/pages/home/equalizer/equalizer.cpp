@@ -1,15 +1,12 @@
 #include "equalizer.hpp"
 
 Equalizer::Equalizer(PluginProcessor &pluginProcessor)
-    : analyzer(pluginProcessor) {
+    : analyzer(pluginProcessor), freqResponse(pluginProcessor) {
   addAndMakeVisible(grid);
   addAndMakeVisible(analyzer);
+  addAndMakeVisible(freqResponse);
 
   resized();
-}
-
-void Equalizer::paint(juce::Graphics &g) {
-  // g.fillAll(juce::Colour(0xfff6feff));
 }
 
 void Equalizer::resized() {
@@ -20,4 +17,5 @@ void Equalizer::resized() {
   LayoutComponent::resized();
 
   analyzer.setBounds(getLocalBounds());
+  freqResponse.setBounds(getLocalBounds());
 }
