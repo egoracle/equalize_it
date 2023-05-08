@@ -1,11 +1,11 @@
 juce_add_plugin(
   ${PROJECT_NAME}
   COPY_PLUGIN_AFTER_BUILD
-  TRUE
+  ${COPY_PLUGIN_AFTER_BUILD}
   PLUGIN_MANUFACTURER_CODE
-  Pamp
+  ${PLUGIN_MANUFACTURER_CODE}
   PLUGIN_CODE
-  P001
+  ${PLUGIN_CODE}
   FORMATS
   ${FORMATS}
   COMPANY_NAME
@@ -15,8 +15,8 @@ juce_add_plugin(
 
 target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_20)
 
-file(GLOB_RECURSE SRC_FILES CONFIGURE_DEPENDS ${CMAKE_CURRENT_LIST_DIR}/*.cpp
-     ${CMAKE_CURRENT_LIST_DIR}/*.hpp)
+file(GLOB_RECURSE SRC_FILES CONFIGURE_DEPENDS "${CMAKE_CURRENT_LIST_DIR}/*.cpp"
+     "${CMAKE_CURRENT_LIST_DIR}/*.hpp")
 target_sources(${PROJECT_NAME} PRIVATE ${SRC_FILES})
 
 set_target_properties(${PROJECT_NAME} PROPERTIES FOLDER "")
@@ -39,6 +39,6 @@ target_link_libraries(
 
 target_include_directories(
   ${PROJECT_NAME}
-  PUBLIC ${CMAKE_CURRENT_LIST_DIR}/app ${CMAKE_CURRENT_LIST_DIR}/shared
-         ${CMAKE_CURRENT_LIST_DIR}/widgets ${CMAKE_CURRENT_LIST_DIR}/pages
+  PUBLIC "${CMAKE_CURRENT_LIST_DIR}/app" "${CMAKE_CURRENT_LIST_DIR}/shared"
+         "${CMAKE_CURRENT_LIST_DIR}/widgets" "${CMAKE_CURRENT_LIST_DIR}/pages"
          ${SPLINE_PATH})

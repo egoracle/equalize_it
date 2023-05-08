@@ -1,10 +1,6 @@
 # JUCE
 add_subdirectory(juce)
 
-set(FORMATS
-    VST3 Standalone
-    PARENT_SCOPE)
-
 set_property(GLOBAL PROPERTY USE_FOLDERS YES PARENT_SCOPE)
 
 option(JUCE_ENABLE_MODULE_SOURCE_GROUPS
@@ -26,7 +22,7 @@ set(JUCE_DEPENDENCIES
     PARENT_SCOPE)
 
 # Friz
-juce_add_module(${CMAKE_CURRENT_LIST_DIR}/friz/Source/friz)
+juce_add_module("${CMAKE_CURRENT_LIST_DIR}/friz/Source/friz")
 
 # Spline
-set(SPLINE_PATH ${CMAKE_CURRENT_LIST_DIR}/spline/src PARENT_SCOPE)
+set(SPLINE_PATH "${CMAKE_CURRENT_LIST_DIR}/spline/src" PARENT_SCOPE)
