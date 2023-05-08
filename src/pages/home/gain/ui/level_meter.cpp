@@ -1,7 +1,7 @@
 #include "level_meter.hpp"
 
 LevelMeterComponent::LevelMeterComponent(PluginProcessor &pluginProcessor)
-    : leftBar(pluginProcessor, 0), rightBar(pluginProcessor, 0) {
+    : leftBar(pluginProcessor, 0), rightBar(pluginProcessor, 1) {
   addAndMakeVisible(leftBar);
   addAndMakeVisible(scale);
   addAndMakeVisible(rightBar);
