@@ -162,12 +162,13 @@ std::function<float(float)> FilterProcessor::getFrequencyResponse() {
     return BaseProcessor::getFrequencyResponse();
   }
 
-  return [this](float freq) {
-    auto iirCoefs = filter->state;
-    auto sr = getSampleRate();
+  return [&](float freq) {
+    const auto iirCoefs = this->getIIRCoefficients();
+    const auto sr = this->getSampleRate();
 
-    float mag = iirCoefs->getMagnitudeForFrequency(freq, sr);
-    return juce::Decibels::gainToDecibels(mag);
+    double mag =
+        iirCoefs->getMagnitudeForFrequency(static_cast<double>(freq), sr);
+    return juce::Decibels::gainToDecibels(static_cast<float>(mag));
   };
 }
 

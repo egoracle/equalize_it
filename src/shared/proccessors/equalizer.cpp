@@ -69,11 +69,11 @@ void EqualizerProcessor::connectAudioNodes() {
 }
 
 std::function<float(float)> EqualizerProcessor::getFrequencyResponse() {
-  return [this](float freq) {
-    float response = getFilter(1)->getFrequencyResponse()(freq);
+  return [&](float freq) {
+    float response = this->getFilter(1)->getFrequencyResponse()(freq);
 
     for (int i = 2; i <= FILTERS_COUNT; ++i) {
-      response += getFilter(i)->getFrequencyResponse()(freq);
+      response += this->getFilter(i)->getFrequencyResponse()(freq);
     }
 
     return response;

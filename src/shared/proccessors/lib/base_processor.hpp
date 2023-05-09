@@ -55,7 +55,7 @@ public:
   virtual void setStateInformation(const void *, int) {}
 
   virtual std::function<float(float)> getFrequencyResponse() {
-    return [](float) { return juce::Decibels::gainToDecibels(1.0f); };
+    return [](float) { return 0.0f; };
   }
 
   JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(BaseProcessor)
