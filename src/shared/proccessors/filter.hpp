@@ -15,6 +15,8 @@ struct FilterParameters {
   juce::AudioParameterFloat *quality;
   juce::AudioParameterFloat *gain;
 
+  FilterParameters(APVTS &, int);
+
   static void addToLayout(APVTS::ParameterLayout &, int);
 
   static juce::String getFilterTypeChoiceID(int) noexcept;
@@ -56,7 +58,6 @@ public:
 
 private:
   void updateFilter();
-  FilterParameters extractFilterParameters(APVTS &);
 
   int id;
   FilterParameters params;

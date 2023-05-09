@@ -4,6 +4,13 @@ Equalizer::Equalizer(PluginProcessor &pluginProcessor)
     : analyzer(pluginProcessor), freqResponse(pluginProcessor) {
   addAndMakeVisible(grid);
   addAndMakeVisible(analyzer);
+
+  for (int id = constants::FILTER_MIN_ID; id <= constants::FILTER_MAX_ID;
+       ++id) {
+    filters.push_back(std::make_unique<FilterComponent>(pluginProcessor, id));
+    addAndMakeVisible(*filters.back());
+  }
+
   addAndMakeVisible(freqResponse);
 
   resized();
@@ -16,6 +23,10 @@ void Equalizer::resized() {
 
   LayoutComponent::resized();
 
-  analyzer.setBounds(getLocalBounds());
-  freqResponse.setBounds(getLocalBounds());
+  const auto bounds = getLocalBounds();
+  analyzer.setBounds(bounds);
+  freqResponse.setBounds(bounds);
+  for (auto &filter : filters) {
+    filter->setBounds(bounds);
+  }
 }

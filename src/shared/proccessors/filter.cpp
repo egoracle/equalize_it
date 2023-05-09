@@ -2,6 +2,19 @@
 
 // FilterParameters
 
+FilterParameters::FilterParameters(APVTS &apvts, int id) {
+  filterTypeChoice = dynamic_cast<juce::AudioParameterChoice *>(
+      apvts.getParameter(FilterParameters::getFilterTypeChoiceID(id)));
+  isActive = dynamic_cast<juce::AudioParameterBool *>(
+      apvts.getParameter(FilterParameters::getIsActiveID(id)));
+  frequency = dynamic_cast<juce::AudioParameterFloat *>(
+      apvts.getParameter(FilterParameters::getFrequencyID(id)));
+  quality = dynamic_cast<juce::AudioParameterFloat *>(
+      apvts.getParameter(FilterParameters::getQualityID(id)));
+  gain = dynamic_cast<juce::AudioParameterFloat *>(
+      apvts.getParameter(FilterParameters::getGainID(id)));
+}
+
 void FilterParameters::addToLayout(APVTS::ParameterLayout &layout,
                                    int filterID) {
   juce::StringArray choices{"Low Pass", "Peak", "High Pass"};
@@ -96,7 +109,7 @@ float FilterParameters::getGainFactorValue() {
 // FilterProcessor
 
 FilterProcessor::FilterProcessor(int filterID, APVTS &apvts)
-    : id(filterID), params(extractFilterParameters(apvts)),
+    : id(filterID), params(apvts, filterID),
       filter(std::make_unique<MultiChannelFilter>()) {}
 
 void FilterProcessor::prepareToPlay(double sampleRate, int samplesPerBlock) {
@@ -170,21 +183,4 @@ std::function<float(float)> FilterProcessor::getFrequencyResponse() {
         iirCoefs->getMagnitudeForFrequency(static_cast<double>(freq), sr);
     return juce::Decibels::gainToDecibels(static_cast<float>(mag));
   };
-}
-
-FilterParameters FilterProcessor::extractFilterParameters(APVTS &apvts) {
-  FilterParameters p;
-
-  p.filterTypeChoice = dynamic_cast<juce::AudioParameterChoice *>(
-      apvts.getParameter(FilterParameters::getFilterTypeChoiceID(id)));
-  p.isActive = dynamic_cast<juce::AudioParameterBool *>(
-      apvts.getParameter(FilterParameters::getIsActiveID(id)));
-  p.frequency = dynamic_cast<juce::AudioParameterFloat *>(
-      apvts.getParameter(FilterParameters::getFrequencyID(id)));
-  p.quality = dynamic_cast<juce::AudioParameterFloat *>(
-      apvts.getParameter(FilterParameters::getQualityID(id)));
-  p.gain = dynamic_cast<juce::AudioParameterFloat *>(
-      apvts.getParameter(FilterParameters::getGainID(id)));
-
-  return p;
 }
