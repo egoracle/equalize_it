@@ -1,14 +1,17 @@
 #include "gain.hpp"
 
-Gain::Gain(PluginProcessor &pluginProcessor) : levelMeter(pluginProcessor) {
+Gain::Gain(PluginProcessor &pluginProcessor)
+    : slider(""), levelMeter(pluginProcessor) {
   addAndMakeVisible(levelMeter);
 
-  slider.setSliderStyle(juce::Slider::SliderStyle::RotaryHorizontalDrag);
+  slider.setSliderStyle(juce::Slider::SliderStyle::RotaryVerticalDrag);
   slider.setTextBoxStyle(juce::Slider::NoTextBox, false, 80, 20);
+  slider.setTextBoxStyle(juce::Slider::TextBoxBelow, false, 50, 15);
   slider.setRange(0.0, 1.0, 0.01);
+  slider.setTextValueSuffix(" dB");
   addAndMakeVisible(slider);
 
-  sliderAttachment = std::make_unique<APVTS::SliderAttachment>(
+  sliderAttachment = std::make_unique<types::APVTS::SliderAttachment>(
       pluginProcessor.getAPVTS(), GainParameters::getWetID(), slider);
 
   resized();

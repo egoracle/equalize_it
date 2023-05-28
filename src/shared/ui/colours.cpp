@@ -1,6 +1,6 @@
 #include "colours.hpp"
 
-#include "../constants/constants.hpp"
+#include "../constants.hpp"
 
 namespace colours {
 

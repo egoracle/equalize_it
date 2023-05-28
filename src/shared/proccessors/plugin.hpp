@@ -1,12 +1,36 @@
 #pragma once
 
+#include <juce_audio_processors/juce_audio_processors.h>
+#include <map>
+
+#include "../types.hpp"
 #include "analyzer.hpp"
+#include "cascade_processor.hpp"
 #include "equalizer.hpp"
 #include "gain.hpp"
-#include "lib/lib.hpp"
 
 class PluginProcessor : public CascadeProcessor {
 public:
+  struct UiState {
+    int selectedFilterID;
+    std::map<int, bool> usedFilterIDs;
+
+    UiState();
+    UiState(int, juce::Array<int> &);
+
+    bool hasSelectedFilter();
+    bool hasUsedFilters();
+
+    void selectPrevFilter();
+    void selectNextFilter();
+
+    bool addFilter();
+    void removeFilter(int);
+
+    juce::var toVar() const;
+    static UiState fromVar(const juce::var &);
+  };
+
   PluginProcessor(
       std::function<juce::AudioProcessorEditor *(PluginProcessor *)> &);
 
@@ -23,20 +47,21 @@ public:
   GainProcessor *getGainProcessor();
   EqualizerProcessor *getEqualizerProcessor();
 
-  APVTS &getAPVTS();
+  types::APVTS &getAPVTS();
+  UiState &getUiState();
 
 protected:
   void initializeEffectNodes() override;
   void connectAudioNodes() override;
 
 private:
-  APVTS::ParameterLayout createParameterLayout();
+  types::APVTS::ParameterLayout createParameterLayout();
 
-private:
   std::function<juce::AudioProcessorEditor *(PluginProcessor *)>
       createEditorCallback;
 
-  APVTS apvts;
+  types::APVTS apvts;
+  UiState uiState;
 
   Node::Ptr analyzerNode;
   Node::Ptr gainNode;

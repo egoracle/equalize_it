@@ -1,28 +1,8 @@
 #include "gain.hpp"
 
-#include "../constants/constants.hpp"
+#include "../constants.hpp"
 
-// GainParameters
-
-void GainParameters::addToLayout(APVTS::ParameterLayout &layout) {
-  layout.add(std::make_unique<juce::AudioParameterFloat>(
-      getWetID(), getWetName(), -12.0f, 12.0f, 0.0f));
-}
-
-inline juce::String GainParameters::getWetID() noexcept { return "gain_wet"; }
-
-inline juce::String GainParameters::getWetName() noexcept { return "Gain Wet"; }
-
-float GainParameters::getWetDbValue() {
-  jassert(wet != nullptr);
-
-  return juce::Decibels::decibelsToGain(wet->get());
-}
-
-// GainProcessor
-
-GainProcessor::GainProcessor(APVTS &apvts)
-    : params(extractGainParameters(apvts)) {}
+GainProcessor::GainProcessor(types::APVTS &apvts) : params(apvts) {}
 
 void GainProcessor::prepareToPlay(double sampleRate, int) {
   previousWetValueDb = params.getWetDbValue();
@@ -78,12 +58,4 @@ void GainProcessor::applyGain(juce::AudioSampleBuffer &audioBuffer) {
                               previousWetValueDb, currentWetValueDb);
     previousWetValueDb = currentWetValueDb;
   }
-}
-
-GainParameters GainProcessor::extractGainParameters(APVTS &apvts) {
-  GainParameters p;
-  p.wet = dynamic_cast<juce::AudioParameterFloat *>(
-      apvts.getParameter(GainParameters::getWetID()));
-
-  return p;
 }

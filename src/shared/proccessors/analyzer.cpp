@@ -1,6 +1,6 @@
 
 #include "analyzer.hpp"
-#include "../constants/constants.hpp"
+#include "../constants.hpp"
 #include "../math/math.hpp"
 
 AnalyzerProcessor::AnalyzerProcessor() { update(); }

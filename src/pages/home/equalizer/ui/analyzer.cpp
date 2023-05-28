@@ -7,7 +7,7 @@
 #include <vector>
 
 AnalyzerComponent::AnalyzerComponent(PluginProcessor &p) : pluginProcessor(p) {
-  startTimerHz(30);
+  startTimerHz(24);
 }
 
 void AnalyzerComponent::paint(juce::Graphics &g) {

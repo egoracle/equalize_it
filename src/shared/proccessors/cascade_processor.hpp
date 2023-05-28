@@ -32,6 +32,21 @@ public:
     audioGraph->processBlock(audioBuffer, midiBuffer);
   }
 
+protected:
+  virtual void initializeEffectNodes() {}
+  virtual void updateGraph() {}
+  virtual void connectAudioNodes() {
+    for (int channel = 0; channel < 2; ++channel) {
+      audioGraph->addConnection({{audioInputNode->nodeID, channel},
+                                 {audioOutputNode->nodeID, channel}});
+    }
+  }
+
+  std::unique_ptr<juce::AudioProcessorGraph> audioGraph;
+
+  Node::Ptr audioInputNode;
+  Node::Ptr audioOutputNode;
+
 private:
   void initializeGraph() {
     audioGraph->clear();
@@ -46,22 +61,4 @@ private:
     initializeEffectNodes();
     connectAudioNodes();
   }
-
-protected:
-  virtual void initializeEffectNodes() {}
-
-  virtual void updateGraph() {}
-
-  virtual void connectAudioNodes() {
-    for (int channel = 0; channel < 2; ++channel) {
-      audioGraph->addConnection({{audioInputNode->nodeID, channel},
-                                 {audioOutputNode->nodeID, channel}});
-    }
-  }
-
-protected:
-  std::unique_ptr<juce::AudioProcessorGraph> audioGraph;
-
-  Node::Ptr audioInputNode;
-  Node::Ptr audioOutputNode;
 };

@@ -4,9 +4,9 @@
 
 #include <functional>
 
-class FrequencyResponseComponent : public juce::Component, private juce::Timer {
+class EqualizerFrequencyResponse : public juce::Component, private juce::Timer {
 public:
-  FrequencyResponseComponent(PluginProcessor &);
+  EqualizerFrequencyResponse(PluginProcessor &);
 
   void paint(juce::Graphics &) override;
 
@@ -14,8 +14,7 @@ public:
 
 private:
   PluginProcessor &pluginProcessor;
-
   std::function<float(float)> frequencyResponse;
 
-  JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(FrequencyResponseComponent)
+  JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(EqualizerFrequencyResponse)
 };

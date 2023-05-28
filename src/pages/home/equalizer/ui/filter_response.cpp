@@ -1,16 +1,16 @@
-#include "filter.hpp"
+#include "filter_response.hpp"
 
 #include "constants.hpp"
 
-FilterComponent::FilterComponent(PluginProcessor &p, int id)
-    : pluginProcessor(p), filterID(id), parameters(p.getAPVTS(), id),
-      colour(colours::getFilterColour(id)),
+FilterFrequencyResponse::FilterFrequencyResponse(PluginProcessor &p, int id)
+    : pluginProcessor(p), filterID(id), colour(colours::getFilterColour(id)),
+      parameters(id, p.getAPVTS()),
       frequencyResponse([](float) { return 0.0f; }) {
-  startTimerHz(30);
+  startTimerHz(24);
 }
 
-void FilterComponent::paint(juce::Graphics &g) {
-  if (!parameters.getIsActiveValue()) {
+void FilterFrequencyResponse::paint(juce::Graphics &g) {
+  if (pluginProcessor.getSampleRate() == 0) {
     return;
   }
 
@@ -48,23 +48,34 @@ void FilterComponent::paint(juce::Graphics &g) {
                                  1.f, juce::PathStrokeType::JointStyle::curved,
                                  juce::PathStrokeType::EndCapStyle::rounded));
 
-  freqRespPath.lineTo(xLast, juce::jmax(yStart, yLast));
-  freqRespPath.lineTo(xMin, juce::jmax(yStart, yLast));
-  freqRespPath.closeSubPath();
+  if (parameters.getIsActiveValue()) {
+    freqRespPath.lineTo(xLast, juce::jmax(yStart, yLast));
+    freqRespPath.lineTo(xMin, juce::jmax(yStart, yLast));
+    freqRespPath.closeSubPath();
 
-  g.setColour(colour.withAlpha(0.05f));
-  g.fillPath(freqRespPath);
+    if (pluginProcessor.getUiState().selectedFilterID == filterID) {
+      g.setColour(colour.withAlpha(0.1f));
+    } else {
+      g.setColour(colour.withAlpha(0.01f));
+    }
+    g.fillPath(freqRespPath);
+  }
 }
 
-void FilterComponent::timerCallback() {
+void FilterFrequencyResponse::timerCallback() {
   const auto equalizerProcessor = pluginProcessor.getEqualizerProcessor();
   if (!equalizerProcessor) {
     return;
   }
 
   const auto filterProcessor = equalizerProcessor->getFilter(filterID);
-
-  if (filterProcessor) {
-    frequencyResponse = filterProcessor->getFrequencyResponse();
+  if (!filterProcessor) {
+    return;
   }
+
+  frequencyResponse = filterProcessor->getFrequencyResponse();
+}
+
+std::function<float(float)> &FilterFrequencyResponse::getFrequencyResponse() {
+  return frequencyResponse;
 }
