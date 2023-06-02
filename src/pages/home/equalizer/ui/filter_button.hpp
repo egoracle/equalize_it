@@ -15,13 +15,11 @@ public:
   void timerCallback() override;
 
 private:
-  juce::Path createCirclePath();
+  const int buttonSize = 20;
 
   int filterID;
   PluginProcessor &pluginProcessor;
   std::function<void()> updateEqualizerCallback;
-
-  const int buttonSize = 20;
 
   FilterParameters filterParameters;
   PluginProcessor::UiState &uiState;

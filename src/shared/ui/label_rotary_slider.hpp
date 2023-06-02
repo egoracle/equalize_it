@@ -2,7 +2,7 @@
 
 #include <juce_gui_basics/juce_gui_basics.h>
 
-class EqItSlider : public juce::Slider {
+class LabelRotarySlider : public juce::Slider {
 public:
   class LookAndFeel : public juce::LookAndFeel_V4 {
   public:
@@ -11,14 +11,16 @@ public:
     juce::Label *createSliderTextBox(juce::Slider &) override;
   };
 
-  EqItSlider(juce::String);
-  ~EqItSlider();
+  LabelRotarySlider(juce::String);
+  LabelRotarySlider();
 
-  juce::String &getLabel();
+  ~LabelRotarySlider();
+
+  juce::String &getLabel() noexcept;
 
 private:
   LookAndFeel lookAndFeel;
   juce::String label;
 
-  JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(EqItSlider)
+  JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(LabelRotarySlider)
 };

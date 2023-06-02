@@ -13,7 +13,7 @@ FilterButton::FilterButton(int id, PluginProcessor &p,
       uiState(p.getUiState()) {
   startTimerHz(24);
 
-  setShape(createCirclePath(), true, true, false);
+  setShape(paths::createCircle(), true, true, false);
   setOutline(colours::getFilterColour(id).brighter(1.25), 3.0f);
 
   setSize(buttonSize, buttonSize);
@@ -64,11 +64,4 @@ void FilterButton::timerCallback() {
   const int x = static_cast<int>(freqToX(filterParameters.getFrequencyValue()));
   const int y = static_cast<int>(dBToY(filterParameters.gain->get()));
   setCentrePosition(x, y);
-}
-
-juce::Path FilterButton::createCirclePath() {
-  juce::Path p;
-  p.addEllipse(0.0f, 0.0f, 1.0f, 1.0f);
-
-  return p;
 }

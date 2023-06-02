@@ -6,9 +6,9 @@
 
 class FilterPanel : public LayoutComponent {
 public:
-  class ParametersWrapper : public LayoutComponent {
+  class Wrapper : public LayoutComponent {
   public:
-    ParametersWrapper(int, PluginProcessor &);
+    Wrapper(int, PluginProcessor &);
 
     void resized() override;
 
@@ -16,25 +16,18 @@ public:
     int filterID;
     PluginProcessor &pluginProcessor;
 
-    EqItSlider qualitySlider;
+    LabelRotarySlider qualitySlider;
     std::unique_ptr<types::APVTS::SliderAttachment> qualitySliderAttachment;
 
-    EqItSlider frequencySlider;
+    LabelRotarySlider frequencySlider;
     std::unique_ptr<types::APVTS::SliderAttachment> frequencySliderAttachment;
 
-    EqItSlider gainSlider;
+    LabelRotarySlider gainSlider;
     std::unique_ptr<types::APVTS::SliderAttachment> gainSliderAttachment;
-
-    juce::ComboBox typeComboBox;
-    std::unique_ptr<types::APVTS::ComboBoxAttachment> typeComboBoxAttachment;
 
     IconButton lowpassButton;
     IconButton peakButton;
     IconButton highpassButton;
-
-    juce::ToggleButton activeFilterButton;
-    std::unique_ptr<types::APVTS::ButtonAttachment>
-        activeFilterButtonAttachment;
   };
 
   FilterPanel(PluginProcessor &, std::function<void()>);
@@ -55,9 +48,6 @@ public:
   void update();
 
 private:
-  juce::Path createPrevTrianglePath();
-  juce::Path createNextTrianglePath();
-
   PluginProcessor &pluginProcessor;
   std::function<void()> updateEqualizerCallback;
 
@@ -78,7 +68,7 @@ private:
   juce::ShapeButton prevFilterButton;
   juce::ShapeButton nextFilterButton;
   juce::Label filterLabel;
-  std::vector<std::unique_ptr<ParametersWrapper>> parameterWrappers;
+  std::vector<std::unique_ptr<Wrapper>> wrappers;
 
   juce::ComponentDragger dragger;
   juce::ComponentBoundsConstrainer constrainer;

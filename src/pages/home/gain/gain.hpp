@@ -10,7 +10,7 @@ public:
   void resized() override;
 
 private:
-  EqItSlider slider;
+  LabelRotarySlider slider;
   std::unique_ptr<types::APVTS::SliderAttachment> sliderAttachment;
 
   LevelMeterComponent levelMeter;

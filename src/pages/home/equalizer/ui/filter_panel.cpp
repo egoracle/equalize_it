@@ -5,7 +5,7 @@
 #include <cmath>
 #include <numbers>
 
-FilterPanel::ParametersWrapper::ParametersWrapper(int id, PluginProcessor &p)
+FilterPanel::Wrapper::Wrapper(int id, PluginProcessor &p)
     : filterID(id), pluginProcessor(p), qualitySlider("Q"),
       frequencySlider("F"), gainSlider("G"),
       lowpassButton("lowpass", BinaryData::lowpass_svg),
@@ -38,34 +38,13 @@ FilterPanel::ParametersWrapper::ParametersWrapper(int id, PluginProcessor &p)
       pluginProcessor.getAPVTS(), FilterParameters::getGainID(id), gainSlider);
   addAndMakeVisible(gainSlider);
 
-  typeComboBox.setColour(juce::ComboBox::backgroundColourId,
-                         juce::Colours::transparentWhite);
-  typeComboBox.setColour(juce::ComboBox::arrowColourId,
-                         juce::Colour(0xff233248).darker(0.3f));
-  typeComboBox.setColour(juce::ComboBox::textColourId,
-                         juce::Colour(0xff233248).darker(0.3f));
-  typeComboBox.addItem("Lowpass", 1);
-  typeComboBox.addItem("Peak", 2);
-  typeComboBox.addItem("Highpass", 3);
-  typeComboBox.setSelectedId(1);
-  typeComboBoxAttachment = std::make_unique<types::APVTS::ComboBoxAttachment>(
-      pluginProcessor.getAPVTS(), FilterParameters::getFilterTypeChoiceID(id),
-      typeComboBox);
-  // addAndMakeVisible(typeComboBox);
-
-  activeFilterButton.setButtonText("asd");
-  activeFilterButtonAttachment =
-      std::make_unique<types::APVTS::ButtonAttachment>(
-          pluginProcessor.getAPVTS(), FilterParameters::getIsActiveID(id),
-          activeFilterButton);
-  // addAndMakeVisible(activeFilterButton);
-
   lowpassButton.onClick = [&]() {
     FilterParameters params(filterID, pluginProcessor.getAPVTS());
     params.filterTypeChoice->beginChangeGesture();
     params.filterTypeChoice->setValueNotifyingHost(0.0f);
     params.filterTypeChoice->endChangeGesture();
   };
+  addAndMakeVisible(lowpassButton);
 
   peakButton.onClick = [&]() {
     FilterParameters params(filterID, pluginProcessor.getAPVTS());
@@ -73,6 +52,7 @@ FilterPanel::ParametersWrapper::ParametersWrapper(int id, PluginProcessor &p)
     params.filterTypeChoice->setValueNotifyingHost(0.5f);
     params.filterTypeChoice->endChangeGesture();
   };
+  addAndMakeVisible(peakButton);
 
   highpassButton.onClick = [&]() {
     FilterParameters params(filterID, pluginProcessor.getAPVTS());
@@ -80,20 +60,15 @@ FilterPanel::ParametersWrapper::ParametersWrapper(int id, PluginProcessor &p)
     params.filterTypeChoice->setValueNotifyingHost(1.0f);
     params.filterTypeChoice->endChangeGesture();
   };
-
-  addAndMakeVisible(lowpassButton);
-  addAndMakeVisible(peakButton);
   addAndMakeVisible(highpassButton);
 
   resized();
 }
 
-void FilterPanel::ParametersWrapper::resized() {
+void FilterPanel::Wrapper::resized() {
   layout.templateRows = {Track(Px(40)), Track(Fr(1))};
   layout.templateColumns = {Track(Fr(1)), Track(Fr(1)), Track(Fr(1))};
 
-  // layout.items.add(juce::GridItem(typeComboBox).withArea(1, 1, 1, 1));
-  // layout.items.add(juce::GridItem(activeFilterButton).withArea(1, 3, 1, 3));
   layout.items.add(juce::GridItem(lowpassButton).withArea(1, 1, 1, 1));
   layout.items.add(juce::GridItem(peakButton).withArea(1, 2, 1, 2));
   layout.items.add(juce::GridItem(highpassButton).withArea(1, 3, 1, 3));
@@ -110,14 +85,16 @@ FilterPanel::FilterPanel(PluginProcessor &p, std::function<void()> uec)
                        colours::primaryColour, colours::responseCurveColour),
       nextFilterButton("next_filter", juce::Colour(0xff233248).darker(0.3f),
                        colours::primaryColour, colours::responseCurveColour) {
-  prevFilterButton.setShape(createPrevTrianglePath(), true, false, false);
+  prevFilterButton.setShape(paths::createRoundedTriangle(180.0f), true, false,
+                            false);
   prevFilterButton.onClick = [&]() {
     uiState.selectPrevFilter();
     updateEqualizerCallback();
   };
   addAndMakeVisible(prevFilterButton);
 
-  nextFilterButton.setShape(createNextTrianglePath(), true, false, false);
+  nextFilterButton.setShape(paths::createRoundedTriangle(0.0f), true, false,
+                            false);
   nextFilterButton.onClick = [&]() {
     uiState.selectNextFilter();
     updateEqualizerCallback();
@@ -129,8 +106,8 @@ FilterPanel::FilterPanel(PluginProcessor &p, std::function<void()> uec)
   addAndMakeVisible(filterLabel);
 
   for (int i = constants::FILTER_MIN_ID; i <= constants::FILTER_MAX_ID; ++i) {
-    parameterWrappers.push_back(std::make_unique<ParametersWrapper>(i, p));
-    addChildComponent(*parameterWrappers.back());
+    wrappers.push_back(std::make_unique<Wrapper>(i, p));
+    addChildComponent(*wrappers.back());
   }
 
   resized();
@@ -173,8 +150,8 @@ void FilterPanel::resized() {
                        .withSize(buttonSize, buttonSize)
                        .withJustifySelf(juce::GridItem::JustifySelf::center)
                        .withAlignSelf(juce::GridItem::AlignSelf::center));
-  for (auto &parametersWrapper : parameterWrappers) {
-    layout.items.add(juce::GridItem(*parametersWrapper)
+  for (auto &wrapper : wrappers) {
+    layout.items.add(juce::GridItem(*wrapper)
                          .withArea(3, 3, 3, 6)
                          .withJustifySelf(juce::GridItem::JustifySelf::end)
                          .withAlignSelf(juce::GridItem::AlignSelf::end));
@@ -200,32 +177,8 @@ void FilterPanel::update() {
 
   for (const auto &[id, isUsed] : uiState.usedFilterIDs) {
     bool shouldBeVisible = (id == uiState.selectedFilterID);
-    parameterWrappers[static_cast<size_t>(id) - 1]->setVisible(shouldBeVisible);
+    wrappers[static_cast<size_t>(id) - 1]->setVisible(shouldBeVisible);
   }
 
   setVisible(true);
-}
-
-juce::Path FilterPanel::createNextTrianglePath() {
-  const float pi = static_cast<float>(std::numbers::pi);
-  const float firstAngle = 2.0f * pi / 3.0f;
-  const float secondAngle = 2.0f * firstAngle;
-
-  juce::Path p;
-  p.startNewSubPath(1.0f, 0.0f);
-  p.lineTo(std::cos(firstAngle), std::sin(firstAngle));
-  p.lineTo(std::cos(secondAngle), std::sin(secondAngle));
-  p.closeSubPath();
-  p = p.createPathWithRoundedCorners(0.333f);
-
-  return p;
-}
-
-juce::Path FilterPanel::createPrevTrianglePath() {
-  const float pi = static_cast<float>(std::numbers::pi);
-
-  juce::Path p(createNextTrianglePath());
-  p.applyTransform(juce::AffineTransform::rotation(pi));
-
-  return p;
 }

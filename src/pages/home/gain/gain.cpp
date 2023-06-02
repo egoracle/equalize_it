@@ -1,7 +1,6 @@
 #include "gain.hpp"
 
-Gain::Gain(PluginProcessor &pluginProcessor)
-    : slider(""), levelMeter(pluginProcessor) {
+Gain::Gain(PluginProcessor &pluginProcessor) : levelMeter(pluginProcessor) {
   addAndMakeVisible(levelMeter);
 
   slider.setSliderStyle(juce::Slider::SliderStyle::RotaryVerticalDrag);
