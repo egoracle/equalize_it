@@ -163,6 +163,16 @@ void FilterPanel::resized() {
   LayoutComponent::resized();
 }
 
+void FilterPanel::mouseDown(const juce::MouseEvent &event) {
+  LayoutComponent::mouseDown(event);
+  dragger.startDraggingComponent(this, event);
+}
+
+void FilterPanel::mouseDrag(const juce::MouseEvent &event) {
+  LayoutComponent::mouseDrag(event);
+  dragger.dragComponent(this, event, &constrainer);
+}
+
 void FilterPanel::update() {
   if (!uiState.hasSelectedFilter()) {
     setVisible(false);

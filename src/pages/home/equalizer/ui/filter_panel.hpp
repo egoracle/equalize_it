@@ -35,15 +35,8 @@ public:
   void paint(juce::Graphics &g) override;
   void resized() override;
 
-  void mouseDown(const juce::MouseEvent &event) override {
-    LayoutComponent::mouseDown(event);
-    dragger.startDraggingComponent(this, event);
-  }
-
-  void mouseDrag(const juce::MouseEvent &event) override {
-    LayoutComponent::mouseDrag(event);
-    dragger.dragComponent(this, event, &constrainer);
-  }
+  void mouseDown(const juce::MouseEvent &event) override;
+  void mouseDrag(const juce::MouseEvent &event) override;
 
   void update();
 

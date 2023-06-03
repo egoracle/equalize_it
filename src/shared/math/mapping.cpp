@@ -8,15 +8,7 @@ namespace math {
 std::function<float(float)> segmentMapping(float fromMin, float fromMax,
                                            float toMin, float toMax) {
   return [=](float x) {
-    x -= fromMin;             // [0; fromMax - fromMin]
-    x /= (fromMax - fromMin); // [0; 1]
-    x -= 0.5f;                // [-0.5; 0.5]
-    x *= 2;                   // [-1; 1]
-    x *= (toMax - toMin);     // [toMin - toMax; toMax - toMin]
-    x += (toMax + toMin);     // [2 * toMin; 2 * toMax]
-    x /= 2;                   // [toMin; toMax]
-
-    return x;
+    return toMin + (toMax - toMin) * (x - fromMin) / (fromMax - fromMin);
   };
 }
 
