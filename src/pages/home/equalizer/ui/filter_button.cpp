@@ -38,10 +38,10 @@ void FilterButton::mouseDown(const juce::MouseEvent &event) {
     return;
   }
 
-  return;
-
   uiState.selectedFilterID = filterID;
   updateEqualizerCallback();
+
+  return;
 
   dragger.startDraggingComponent(this, event);
 }

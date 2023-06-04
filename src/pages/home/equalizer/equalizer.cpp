@@ -47,7 +47,8 @@ void Equalizer::resized() {
     filterFreqResponse->setBounds(bounds);
   }
   freqResponse.setBounds(bounds);
-  filterPanel.setBounds(bounds.withSizeKeepingCentre(330, 170));
+  filterPanel.setBounds(bounds.withSizeKeepingCentre(300, 170).translated(
+      0.0f, static_cast<float>(getHeight()) * 0.5f - 85.0f - 30.0f));
   for (auto &filterButton : filterButtons) {
     filterButton->timerCallback();
   }
