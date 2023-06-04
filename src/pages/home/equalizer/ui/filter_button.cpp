@@ -38,6 +38,8 @@ void FilterButton::mouseDown(const juce::MouseEvent &event) {
     return;
   }
 
+  return;
+
   uiState.selectedFilterID = filterID;
   updateEqualizerCallback();
 
@@ -46,6 +48,9 @@ void FilterButton::mouseDown(const juce::MouseEvent &event) {
 
 void FilterButton::mouseDrag(const juce::MouseEvent &event) {
   ShapeButton::mouseDrag(event);
+
+  return;
+
   dragger.dragComponent(this, event, &constrainer);
 }
 
