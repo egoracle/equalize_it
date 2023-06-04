@@ -1,42 +1,10 @@
 #pragma once
 
-#include "lib/base_processor.hpp"
-
 #include <juce_dsp/juce_dsp.h>
 
-enum class FilterType { LowPass, Peak, HighPass };
-
-struct FilterParameters {
-  juce::AudioParameterChoice *filterTypeChoice;
-
-  juce::AudioParameterBool *isActive;
-
-  juce::AudioParameterFloat *frequency;
-  juce::AudioParameterFloat *quality;
-  juce::AudioParameterFloat *gain;
-
-  static void addToLayout(APVTS::ParameterLayout &, int);
-
-  static juce::String getFilterTypeChoiceID(int) noexcept;
-  static juce::String getFilterTypeChoiceName(int) noexcept;
-  FilterType getFilterType();
-
-  static juce::String getIsActiveID(int) noexcept;
-  static juce::String getIsActiveName(int) noexcept;
-  bool getIsActiveValue();
-
-  static juce::String getFrequencyID(int) noexcept;
-  static juce::String getFrequencyName(int) noexcept;
-  float getFrequencyValue();
-
-  static juce::String getQualityID(int) noexcept;
-  static juce::String getQualityName(int) noexcept;
-  float getQualityValue();
-
-  static juce::String getGainID(int) noexcept;
-  static juce::String getGainName(int) noexcept;
-  float getGainFactorValue();
-};
+#include "../parameters/filter.hpp"
+#include "../types.hpp"
+#include "base_processor.hpp"
 
 class FilterProcessor : public BaseProcessor {
 public:
@@ -46,17 +14,16 @@ public:
       juce::dsp::ProcessorDuplicator<IIRFilter, IIRCoefficients>;
   using IIRCoefficientsPtr = juce::ReferenceCountedObjectPtr<IIRCoefficients>;
 
-  FilterProcessor(int, APVTS &);
+  FilterProcessor(int, types::APVTS &);
 
   void prepareToPlay(double, int) override;
   void processBlock(juce::AudioSampleBuffer &, juce::MidiBuffer &) override;
 
-  IIRCoefficientsPtr getIIRCoefficients();
   std::function<float(float)> getFrequencyResponse() override;
 
 private:
   void updateFilter();
-  FilterParameters extractFilterParameters(APVTS &);
+  IIRCoefficientsPtr getIIRCoefficients();
 
   int id;
   FilterParameters params;

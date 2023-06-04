@@ -1,23 +1,14 @@
 #pragma once
 
+#include "../constants.hpp"
+#include "../parameters/equalizer.hpp"
+#include "../types.hpp"
+#include "cascade_processor.hpp"
 #include "filter.hpp"
-#include "lib/cascade_processor.hpp"
-
-struct EqualizerParameters {
-  juce::AudioParameterBool *isActive;
-
-  static void addToLayout(APVTS::ParameterLayout &);
-
-  static juce::String getIsActiveID() noexcept;
-  static juce::String getIsActiveName() noexcept;
-  bool getIsActiveValue();
-};
 
 class EqualizerProcessor : public CascadeProcessor {
 public:
-  enum { FILTERS_COUNT = 12 };
-
-  EqualizerProcessor(APVTS &);
+  EqualizerProcessor(types::APVTS &);
 
   void processBlock(juce::AudioSampleBuffer &, juce::MidiBuffer &) override;
 
@@ -30,9 +21,7 @@ protected:
   void connectAudioNodes() override;
 
 private:
-  EqualizerParameters extractEqualizerParameters(APVTS &);
-
-  APVTS &treeState;
+  types::APVTS &treeState;
   EqualizerParameters params;
-  Node::Ptr filterNodes[FILTERS_COUNT];
+  Node::Ptr filterNodes[constants::FILTERS_COUNT];
 };

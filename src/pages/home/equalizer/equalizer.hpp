@@ -1,8 +1,10 @@
 #pragma once
 
 #include "shared.hpp"
-
 #include "ui/ui.hpp"
+
+#include <memory>
+#include <vector>
 
 class Equalizer : public LayoutComponent {
 public:
@@ -10,8 +12,19 @@ public:
 
   void resized() override;
 
+  void mouseDown(const juce::MouseEvent &event) override;
+  void mouseDoubleClick(const juce::MouseEvent &event) override;
+
+  void update();
+
 private:
+  PluginProcessor &pluginProcessor;
+  PluginProcessor::UiState &uiState;
+
   GridComponent grid;
   AnalyzerComponent analyzer;
-  FrequencyResponseComponent freqResponse;
+  std::vector<std::unique_ptr<FilterFrequencyResponse>> filterFreqResponses;
+  EqualizerFrequencyResponse freqResponse;
+  FilterPanel filterPanel;
+  std::vector<std::unique_ptr<FilterButton>> filterButtons;
 };

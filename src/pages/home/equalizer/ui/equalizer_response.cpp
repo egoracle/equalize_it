@@ -1,13 +1,13 @@
-#include "frequency_response.hpp"
+#include "equalizer_response.hpp"
 
 #include "constants.hpp"
 
-FrequencyResponseComponent::FrequencyResponseComponent(PluginProcessor &p)
+EqualizerFrequencyResponse::EqualizerFrequencyResponse(PluginProcessor &p)
     : pluginProcessor(p), frequencyResponse([](float) { return 0.0f; }) {
-  startTimerHz(30);
+  startTimerHz(24);
 }
 
-void FrequencyResponseComponent::paint(juce::Graphics &g) {
+void EqualizerFrequencyResponse::paint(juce::Graphics &g) {
   const auto equalizerProcessor = pluginProcessor.getEqualizerProcessor();
 
   if (!equalizerProcessor) {
@@ -44,7 +44,7 @@ void FrequencyResponseComponent::paint(juce::Graphics &g) {
                                  juce::PathStrokeType::EndCapStyle::rounded));
 }
 
-void FrequencyResponseComponent::timerCallback() {
+void EqualizerFrequencyResponse::timerCallback() {
   const auto equalizerProcessor = pluginProcessor.getEqualizerProcessor();
 
   if (equalizerProcessor) {

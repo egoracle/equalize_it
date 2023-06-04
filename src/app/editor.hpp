@@ -19,7 +19,7 @@ public:
   void resized() override;
 
 private:
-  SairaFontLookAndFeel lookAndFeel;
+  PluginLookAndFeel lookAndFeel;
 
   HomePage homePage;
 

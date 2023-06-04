@@ -1,21 +1,12 @@
 #pragma once
 
-#include "lib/lib.hpp"
-
-struct GainParameters {
-  juce::AudioParameterFloat *wet;
-
-  static void addToLayout(APVTS::ParameterLayout &);
-
-  static inline juce::String getWetID() noexcept;
-  static inline juce::String getWetName() noexcept;
-
-  float getWetDbValue();
-};
+#include "../parameters/gain.hpp"
+#include "../types.hpp"
+#include "base_processor.hpp"
 
 class GainProcessor : public BaseProcessor {
 public:
-  GainProcessor(APVTS &);
+  GainProcessor(types::APVTS &);
 
   void prepareToPlay(double, int) override;
   void processBlock(juce::AudioSampleBuffer &, juce::MidiBuffer &) override;
@@ -23,8 +14,6 @@ public:
   float getRmsValue(int);
 
 private:
-  GainParameters extractGainParameters(APVTS &);
-
   void updateRmsValue(juce::AudioSampleBuffer &, int);
   void applyGain(juce::AudioSampleBuffer &);
 

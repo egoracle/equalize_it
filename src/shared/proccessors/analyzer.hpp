@@ -1,12 +1,12 @@
 #pragma once
 
-#include "../dsp/dsp.hpp"
-#include "lib/lib.hpp"
-
 #include <functional>
 #include <memory>
 #include <valarray>
 #include <vector>
+
+#include "../dsp/dsp.hpp"
+#include "base_processor.hpp"
 
 class AnalyzerProcessor : public BaseProcessor {
 public:

@@ -2,16 +2,14 @@
 
 PluginEditor::PluginEditor(PluginProcessor &p)
     : juce::AudioProcessorEditor(&p), homePage(p) {
-  setSize(defaultWidth, defaultHeight);
-  setResizable(true, true);
+  juce::LookAndFeel_V4::setDefaultLookAndFeel(&lookAndFeel);
 
   const auto desktopArea =
       juce::Desktop::getInstance().getDisplays().getPrimaryDisplay()->userArea;
-
+  setSize(defaultWidth, defaultHeight);
+  setResizable(true, true);
   setResizeLimits(minWidth, minHeight, desktopArea.getWidth(),
                   desktopArea.getHeight());
-
-  juce::LookAndFeel::setDefaultLookAndFeel(&lookAndFeel);
 
   addAndMakeVisible(homePage);
 
@@ -19,7 +17,7 @@ PluginEditor::PluginEditor(PluginProcessor &p)
 }
 
 PluginEditor::~PluginEditor() {
-  juce::LookAndFeel::setDefaultLookAndFeel(nullptr);
+  juce::LookAndFeel_V4::setDefaultLookAndFeel(nullptr);
 }
 
 void PluginEditor::resized() { homePage.setBounds(getLocalBounds()); }

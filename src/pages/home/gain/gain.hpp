@@ -10,9 +10,8 @@ public:
   void resized() override;
 
 private:
-  juce::Slider slider;
-  std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment>
-      sliderAttachment;
-  
+  LabelRotarySlider slider;
+  std::unique_ptr<types::APVTS::SliderAttachment> sliderAttachment;
+
   LevelMeterComponent levelMeter;
 };
