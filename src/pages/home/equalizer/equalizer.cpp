@@ -75,23 +75,24 @@ void Equalizer::mouseDoubleClick(const juce::MouseEvent &event) {
 
   const auto xToFreq = math::invLogMapping(xMin, xMax, constants::GRID_MIN_FREQ,
                                            constants::GRID_MAX_FREQ);
-  const auto freqToNorm = math::segmentMapping(20, 20000, 0, 1);
   const auto yToDb = math::segmentMapping(yMax, 0.0f, constants::GRID_MIN_DB,
                                           constants::GRID_MAX_DB);
   const auto dBToNorm = math::segmentMapping(-12, 12, 0, 1);
 
-  const int x = event.getMouseDownX();
-  const int y = event.getMouseDownY();
+  const float x = static_cast<float>(event.getMouseDownX());
+  const float y = static_cast<float>(event.getMouseDownY());
 
   FilterParameters filterParameters(uiState.selectedFilterID,
                                     pluginProcessor.getAPVTS());
+  const auto freqToNorm = filterParameters.frequency->getNormalisableRange();
 
   filterParameters.isActive->beginChangeGesture();
   filterParameters.isActive->setValueNotifyingHost(1.0f);
   filterParameters.isActive->endChangeGesture();
 
   filterParameters.frequency->beginChangeGesture();
-  filterParameters.frequency->setValueNotifyingHost(freqToNorm(xToFreq(x)));
+  filterParameters.frequency->setValueNotifyingHost(
+      freqToNorm.convertTo0to1(xToFreq(x)));
   filterParameters.frequency->endChangeGesture();
 
   filterParameters.gain->beginChangeGesture();
