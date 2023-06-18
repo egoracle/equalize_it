@@ -61,19 +61,13 @@ The releases have an installer for Windows, but if you want to test the plugin f
 
 ### Installation
 
-1. Clone the repo
+1. Clone the repo with submodules
 
    ```sh
-   git clone https://github.com/SmEgDm/equalize_it.git
+   git clone https://github.com/SmEgDm/equalize_it.git --recursive
    ```
 
-2. Install git-submodules
-
-   ```sh
-   git submodules update --init --recursive
-   ```
-
-3. Set the formats you need in `CMakeLists.txt` (all formats can be found [here](https://github.com/juce-framework/JUCE/blob/master/docs/CMake%20API.md))
+2. Set the formats you need in `CMakeLists.txt` (all formats can be found [here](https://github.com/juce-framework/JUCE/blob/master/docs/CMake%20API.md))
    ```cmake
    set(FORMATS [<format> ...])
    ```
@@ -89,7 +83,7 @@ The releases have an installer for Windows, but if you want to test the plugin f
 2. Run build
 
    ```sh
-   cmake --build build --config Debug
+   cmake --build build --config Release
    ```
 
 ## Usage
