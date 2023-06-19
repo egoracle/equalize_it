@@ -7,7 +7,7 @@
   <h3 align="center">Equalize It</h3>
 
   <p align="center">
-    12-band parametric equalizer
+    12-band parametric EQ
   </p>
 </div>
 
